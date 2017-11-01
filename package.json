@@ -1,0 +1,16 @@
+{
+  "name": "wssh",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "browserify": "^14.5.0",
+    "docker-browser-console": "^6.0.0",
+    "websocket-stream": "^5.1.1",
+    "ws": "^3.2.0"
+  },
+  "scripts": {
+    "start": "browserify bundle.js > dist/bundle.js; node server.js"
+  }
+
+}
