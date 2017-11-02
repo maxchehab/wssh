@@ -15,7 +15,7 @@ Using npm, install the neccessary dependencies.
 ```bash
 $ npm install
 ```
-Some fancy text will start scrolling down matrix style. If you are in a public area with an audience, this is a great opportunity to full-screen your terminal and rollplay as 4chan, the internet's greatest hacker.
+Some fancy text will start scrolling down matrix style. If you are in a public area with an audience, this is a great opportunity to F11 your terminal and rollplay as 4chan, the internet's greatest hacker.
 
 Awesome? No errors? Perfect! Just...
 ```bash
