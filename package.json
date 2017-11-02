@@ -10,7 +10,7 @@
     "ws": "^3.2.0"
   },
   "scripts": {
+    "docker": "docker build -t wssh docker",
     "start": "browserify bundle.js > dist/bundle.js; node server.js"
   }
-
 }

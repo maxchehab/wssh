@@ -10,7 +10,7 @@ let dockerServer = new ws.Server({port:8080})
 dockerServer.on('connection', function(socket) {
   socket = websocket(socket)
   // this will spawn the container and forward the output to the browser
-  socket.pipe(docker('ubuntu')).pipe(socket)
+  socket.pipe(docker('wssh')).pipe(socket)
 });
 
 let webServer = http.createServer();

@@ -19,6 +19,7 @@ Some fancy text will start scrolling down matrix style. If you are in a public a
 
 Awesome? No errors? Perfect! Just...
 ```bash
+$ npm run docker
 $ npm run start
 ```
 <p align="center">

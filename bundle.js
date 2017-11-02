@@ -10,4 +10,9 @@ let terminal = docker()
 terminal.pipe(websocket('ws://147.222.165.197:8080')).pipe(terminal)
 
 // append the terminal to a DOM element
-terminal.appendTo(document.body)
+terminal.appendTo(document.body);
+window.onload = function(){
+	let event = document.createEvent('HTMLEvents');
+	event.initEvent('resize', true, false);
+	window.dispatchEvent(event);
+}
