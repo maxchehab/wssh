@@ -1,4 +1,4 @@
-# wssh
+# wssh 💨💨
 Online ssh interface using docker and websockets.
 
 ## ⚡ Before you get going ⚡
