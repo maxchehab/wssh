@@ -23,6 +23,7 @@
   },
   "scripts": {
     "docker": "docker build -t wssh docker",
+    "cleanup": "docker kill $(docker ps -q); docker rm $(docker ps -a -q)",
     "build": "next build",
     "start": "node server"
   }
