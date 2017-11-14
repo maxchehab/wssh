@@ -1,8 +1,15 @@
 import React from "react";
 import Terminal from "../components/Terminal";
-import { Paper, Tabs, Tab, LinearProgress, AppBar, Toolbar } from "material-ui";
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
-import getMuiTheme from "material-ui/styles/getMuiTheme";
+import {
+  Paper,
+  Tabs,
+  Tab,
+  LinearProgress,
+  AppBar,
+  Toolbar
+} from "../components/material-ui/";
+import MuiThemeProvider from "../components/material-ui/styles/MuiThemeProvider";
+import getMuiTheme from "../components/material-ui/styles/getMuiTheme";
 
 const theme = getMuiTheme({
   palette: {
@@ -35,14 +42,14 @@ export default class extends React.Component {
           rel="stylesheet"
         />
         <MuiThemeProvider muiTheme={theme}>
-          <Tabs>
-            <Tab value="one" label="Terminal">
+          <Tabs inkBarStyle={{ width: "10%" }}>
+            <Tab style={{ width: "10%" }} label="Terminal">
               <Terminal />
             </Tab>
-            <Tab value="two" label="Terminal">
+            <Tab style={{ width: "10%" }} label="Terminal">
               <Terminal />
             </Tab>
-            <Tab value="three" label="Terminal">
+            <Tab style={{ width: "10%" }} label="Terminal">
               <Terminal />
             </Tab>
           </Tabs>
