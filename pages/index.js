@@ -7,7 +7,7 @@ import {
   LinearProgress,
   AppBar,
   Toolbar
-} from "../components/material-ui/";
+} from "../components/material-ui/index";
 import MuiThemeProvider from "../components/material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "../components/material-ui/styles/getMuiTheme";
 
@@ -17,7 +17,8 @@ const theme = getMuiTheme({
     primary2Color: "#003f72",
     accent1Color: "#691012",
     pickerHeaderColor: "#003f72"
-  }
+  },
+  userAgent: (typeof navigator !== "undefined" && navigator.userAgent) || "all"
 });
 
 export default class extends React.Component {
