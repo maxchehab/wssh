@@ -1,29 +1,37 @@
-const ws = require('ws')
-const websocket = require('websocket-stream')
-const docker = require('docker-browser-console')
-const path = require('path')
-const http = require('http')
-const fs = require('fs')
+const ws = require("ws");
+const websocket = require("websocket-stream");
+const docker = require("docker-browser-console-nextjs");
+const express = require("express");
+const next = require("next");
 
-let dockerServer = new ws.Server({port:8080})
+const dev = process.env.NODE_ENV !== "production";
+const app = next({ dev });
+const handle = app.getRequestHandler();
+const port = dev ? 3000 : 80;
 
-dockerServer.on('connection', function(socket) {
-  socket = websocket(socket)
+app
+  .prepare()
+  .then(() => {
+    const server = express();
+
+    server.get("*", (req, res) => {
+      return handle(req, res);
+    });
+
+    server.listen(port, err => {
+      if (err) throw err;
+      console.log("> Ready on http://localhost:" + port);
+    });
+  })
+  .catch(ex => {
+    console.error(ex.stack);
+    process.exit(1);
+  });
+
+let dockerServer = new ws.Server({ port: 8080 });
+
+dockerServer.on("connection", function(socket) {
+  socket = websocket(socket);
   // this will spawn the container and forward the output to the browser
-  socket.pipe(docker('wssh')).pipe(socket)
+  socket.pipe(docker("wssh")).pipe(socket);
 });
-
-let webServer = http.createServer();
-
-webServer.on('request', function(req, res) {
-  fs.createReadStream(path.join(__dirname, req.url === '/bundle.js' ? 'dist/bundle.js' : 'dist/index.html')).pipe(res)
-})
-
-webServer.on('listening', function() {
-  console.log('> Listening at http://localhost:'+webServer.address().port);
-})
-
-webServer.listen(3000)
-
-
-
