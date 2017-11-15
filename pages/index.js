@@ -56,6 +56,7 @@ export default class extends React.Component {
   }
 
   newTerminal() {
+    deleting = false;
     let tabs = this.state.tabs.slice();
     let key = tabCount;
     tabs.push(
