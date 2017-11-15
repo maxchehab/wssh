@@ -29,11 +29,10 @@ export default class Terminal extends React.Component {
 
     // append the terminal to a DOM element
     terminal.appendTo(this.refs.container);
-    window.onload = function() {
-      let event = document.createEvent("HTMLEvents");
-      event.initEvent("resize", true, false);
-      window.dispatchEvent(event);
-    };
+
+    let event = document.createEvent("HTMLEvents");
+    event.initEvent("resize", true, false);
+    window.dispatchEvent(event);
   }
 
   render() {
