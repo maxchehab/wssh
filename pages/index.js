@@ -22,38 +22,84 @@ const theme = getMuiTheme({
   userAgent: (typeof navigator !== "undefined" && navigator.userAgent) || "all"
 });
 
+let tabCount = 0;
+let deleting = false;
+
 export default class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0,
-      tabs: [
-        <Tab key={0} value={0} style={{ width: "10%" }} label="Terminal">
-          <Terminal />
-        </Tab>
-      ]
+      value: -1,
+      tabs: []
     };
+  }
+
+  removeTerminal(id) {
+    deleting = true;
+    let tabs = this.state.tabs.slice();
+    let index = 0;
+    let lastValue = -1;
+
+    for (let tab of tabs) {
+      if (tab.props.value == id) {
+        break;
+      }
+      lastValue = tab.props.value;
+      index++;
+    }
+
+    tabs.splice(index, 1);
+    this.setState({
+      tabs: tabs,
+      value: lastValue
+    });
   }
 
   newTerminal() {
     let tabs = this.state.tabs.slice();
+    let key = tabCount;
     tabs.push(
       <Tab
-        key={this.state.tabs.length}
-        value={this.state.tabs.length}
+        key={key}
+        value={key}
         style={{ width: "10%" }}
-        label="Terminal"
+        className={"tab"}
+        label={"Terminal"}
+        icon={
+          <div onClick={() => this.removeTerminal(key)}>
+            <i
+              style={{
+                display: "none",
+                right: 5,
+                position: "absolute",
+                bottom: 14,
+                fontSize: 20
+              }}
+              className="material-icons"
+            >
+              close
+            </i>
+          </div>
+        }
       >
         <Terminal />
       </Tab>
     );
     this.setState({
       tabs: tabs,
-      value: this.state.tabs.length
+      value: key
     });
+    tabCount++;
   }
 
   handleChange = value => {
+    if (deleting && value != -1) {
+      deleting = false;
+      return;
+    } else {
+      deleting = false;
+    }
+
     this.setState({
       value: value
     });
@@ -69,6 +115,9 @@ export default class extends React.Component {
           body {
             margin: 0;
           }
+          .tab:hover .material-icons {
+            display: block !important;
+          }
         `}</style>
         <link
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Material+Icons"
@@ -80,6 +129,9 @@ export default class extends React.Component {
             onChange={this.handleChange.bind(this)}
             inkBarStyle={{ width: "10%" }}
           >
+            <Tab key={-1} value={-1} style={{ width: "10%" }} label="Terminal">
+              <Terminal />
+            </Tab>
             {this.state.tabs}
             <Tab
               key={1}
