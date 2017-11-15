@@ -101,11 +101,17 @@ export default class extends React.Component {
       deleting = false;
     }
 
-    this.setState({
-      value: value
-    });
-    if (value == "new") {
-      this.newTerminal();
+    switch (value) {
+      case "new":
+        this.newTerminal();
+        break;
+      case "help":
+        this.toggleHelp();
+        break;
+      default:
+        this.setState({
+          value: value
+        });
     }
   };
 
@@ -135,15 +141,24 @@ export default class extends React.Component {
             </Tab>
             {this.state.tabs}
             <Tab
-              key={1}
+              key={"new"}
               value={"new"}
               style={{
-                width: "48px",
+                width: 48,
                 position: "absolute",
-                right: 0,
-                boxShadow: "rgb(0, 0, 0) 0px 0px 3px"
+                right: 0
               }}
               icon={<i className="material-icons">add_to_queue</i>}
+            />
+            <Tab
+              key={"help"}
+              value={"help"}
+              style={{
+                width: 48,
+                position: "absolute",
+                right: 48
+              }}
+              icon={<i className="material-icons">help_outline</i>}
             />
           </Tabs>
         </MuiThemeProvider>
