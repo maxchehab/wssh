@@ -1,5 +1,5 @@
 import React from "react";
-import docker from "docker-browser-console-nextjs";
+import docker from "docker-browser-console";
 import websocket from "websocket-stream";
 
 export default class Terminal extends React.Component {

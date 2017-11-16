@@ -1797,9 +1797,9 @@ diffie-hellman@^5.0.0:
     miller-rabin "^4.0.0"
     randombytes "^2.0.0"
 
-docker-browser-console-nextjs@^7.0.1:
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/docker-browser-console-nextjs/-/docker-browser-console-nextjs-7.0.2.tgz#6a95efbc95cb79fef060028881b972a9d5cf4c7c"
+docker-browser-console@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/docker-browser-console/-/docker-browser-console-6.0.0.tgz#8e7c76c18f01135d15885d9ca7d6b7ded8a680d9"
   dependencies:
     brfs "^1.2.0"
     computed-style "^0.1.3"
@@ -1807,7 +1807,7 @@ docker-browser-console-nextjs@^7.0.1:
     docker-run "^3.0.0"
     duplexify "^3.2.0"
     ndjson "^1.2.3"
-    term.js-nextjs "^0.0.7"
+    term.js "^0.0.4"
     xtend "^4.0.0"
 
 docker-host@^3.0.0:
@@ -4643,8 +4643,8 @@ public-encrypt@^4.0.0:
     randombytes "^2.0.1"
 
 pump@^1.0.0:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/pump/-/pump-1.0.2.tgz#3b3ee6512f94f0e575538c17995f9f16990a5d51"
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/pump/-/pump-1.0.3.tgz#5dfe8311c33bbf6fc18261f9f34702c47c08a954"
   dependencies:
     end-of-stream "^1.1.0"
     once "^1.3.1"
@@ -5839,9 +5839,9 @@ term-size@^1.2.0:
   dependencies:
     execa "^0.7.0"
 
-term.js-nextjs@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/term.js-nextjs/-/term.js-nextjs-0.0.7.tgz#2987601b18b243a8c65b9acf53478e73f1c54fa3"
+term.js@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/term.js/-/term.js-0.0.4.tgz#20494d86dfd35e0249d76cd8325c1e0f06c0ef3e"
 
 text-extensions@^1.0.0:
   version "1.7.0"

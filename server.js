@@ -1,6 +1,6 @@
 const ws = require("ws");
 const websocket = require("websocket-stream");
-const docker = require("docker-browser-console-nextjs");
+const docker = require("docker-browser-console");
 const express = require("express");
 const next = require("next");
 
