@@ -8,9 +8,9 @@ import {
   AppBar,
   Toolbar,
   FontIcon
-} from "../components/material-ui/index";
-import MuiThemeProvider from "../components/material-ui/styles/MuiThemeProvider";
-import getMuiTheme from "../components/material-ui/styles/getMuiTheme";
+} from "material-ui";
+import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import getMuiTheme from "material-ui/styles/getMuiTheme";
 
 const theme = getMuiTheme({
   palette: {

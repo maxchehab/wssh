@@ -6,6 +6,7 @@
   "dependencies": {
     "docker-browser-console-nextjs": "^7.0.1",
     "express": "^4.16.2",
+    "material-ui": "^0.19.4",
     "next": "^4.1.4",
     "npm": "^5.5.1",
     "react": "^16.0.0",
