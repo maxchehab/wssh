@@ -25,6 +25,10 @@
     "docker": "docker build -t wssh docker",
     "cleanup": "docker kill $(docker ps -q); docker rm $(docker ps -a -q)",
     "build": "next build",
-    "start": "node server"
+    "start": "node server",
+    "postinstall": "quickfix"
+  },
+  "devDependencies": {
+    "quickfix": "^1.0.3"
   }
 }
