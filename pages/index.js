@@ -32,9 +32,10 @@ export default class extends React.Component {
       value: -1,
       tabs: []
     };
+    this.removeTerminal = this._removeTerminal.bind(this);
   }
 
-  removeTerminal(id) {
+  _removeTerminal(id) {
     deleting = true;
     let tabs = this.state.tabs.slice();
     let index = 0;
@@ -51,7 +52,7 @@ export default class extends React.Component {
     tabs.splice(index, 1);
     this.setState({
       tabs: tabs,
-      value: lastValue
+      value: id == this.state.value ? lastValue : this.state.value
     });
   }
 
@@ -67,7 +68,7 @@ export default class extends React.Component {
         className={"tab"}
         label={"Terminal"}
         icon={
-          <div onClick={() => this.removeTerminal(key)}>
+          <div onClick={e => this.removeTerminal(key)}>
             <i
               style={{
                 display: "none",
