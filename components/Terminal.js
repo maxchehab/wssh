@@ -43,16 +43,6 @@ export default class Terminal extends React.Component {
           overflow: "hidden"
         }}
       >
-        <style global jsx>{`
-          .terminal-cursor {
-            background-color: white;
-          }
-
-          .docker-browser-console {
-            font-family: monospace;
-            background-color: black;
-          }
-        `}</style>
         <div
           style={{
             height: this.state.height - 48

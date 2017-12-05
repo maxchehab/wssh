@@ -5,6 +5,9 @@ import AppBar from "material-ui/AppBar";
 import Tabs, { Tab } from "material-ui/Tabs";
 import Terminal from "../components/Terminal";
 
+let tabCount = 0;
+let deleting = false;
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -14,20 +17,54 @@ const styles = theme => ({
 });
 
 class ScrollableTabsButtonAuto extends React.Component {
-  state = {
-    value: 0
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: 0,
+      tabs: [],
+      terminals: []
+    };
+  }
 
   handleChange = (event, value) => {
     this.setState({ value });
   };
 
+  newTerminal() {
+    deleting = false;
+    let tabs = this.state.tabs.slice();
+    let terminals = this.state.terminals.slice();
+    let key = tabCount;
+    tabs.push(<Tab label="Terminal" />);
+    terminals.push(<Terminal enabled={key == this.state.value} />);
+    this.setState({
+      tabs: tabs,
+      terminals: terminals,
+      value: key
+    });
+    tabCount++;
+  }
+
   render() {
-    const { classes } = this.props;
     const { value } = this.state;
 
     return (
-      <div className={classes.root}>
+      <div>
+        <button onClick={() => this.newTerminal()}>new terminal</button>
+        <style global jsx>{`
+          .terminal-cursor {
+            background-color: white;
+          }
+
+          body {
+            margin: 0;
+          }
+
+          .docker-browser-console {
+            font-family: monospace;
+            background-color: black;
+          }
+        `}</style>
         <AppBar position="static" color="default">
           <Tabs
             value={value}
@@ -37,22 +74,10 @@ class ScrollableTabsButtonAuto extends React.Component {
             scrollable
             scrollButtons="auto"
           >
-            <Tab label="Terminal" />
-            <Tab label="Terminal" />
-            <Tab label="Terminal" />
-            <Tab label="Terminal" />
-            <Tab label="Terminal" />
-            <Tab label="Terminal" />
-            <Tab label="Terminal" />
+            {this.state.tabs}
           </Tabs>
         </AppBar>
-        <Terminal enabled={value === 0} />
-        <Terminal enabled={value === 1} />
-        <Terminal enabled={value === 2} />
-        <Terminal enabled={value === 3} />
-        <Terminal enabled={value === 4} />
-        <Terminal enabled={value === 5} />
-        <Terminal enabled={value === 6} />
+        {this.state.terminals}
       </div>
     );
   }
