@@ -6,7 +6,7 @@ import Tabs, { Tab } from "material-ui/Tabs";
 import Terminal from "../components/Terminal";
 import TerminalList from "../components/TerminalList";
 
-let tabCount = 0;
+let tabCount = 2;
 let deleting = false;
 
 const styles = theme => ({
@@ -50,7 +50,19 @@ class ScrollableTabsButtonAuto extends React.Component {
   }
 
   handleChange = (event, value) => {
-    this.setState({ value });
+    console.log(value);
+    switch (value) {
+      case "new":
+        this.newTerminal();
+        break;
+      case "help":
+        this.toggleHelp();
+        break;
+      default:
+        this.setState({
+          value: value
+        });
+    }
   };
 
   newTerminal() {
@@ -75,7 +87,7 @@ class ScrollableTabsButtonAuto extends React.Component {
             e.preventDefault();
           }
         }}
-        style={{ height: 48 }}
+        style={{ height: 48, minWidth: 160 }}
         value={key}
         label="Terminal"
         icon={
@@ -170,6 +182,26 @@ class ScrollableTabsButtonAuto extends React.Component {
             scrollButtons="auto"
           >
             {this.state.tabs}
+            <Tab
+              key={"new"}
+              value={"new"}
+              style={{
+                width: 48,
+                position: "absolute",
+                right: 0
+              }}
+              icon={<i className="material-icons">add_to_queue</i>}
+            />
+            <Tab
+              key={"help"}
+              value={"help"}
+              style={{
+                width: 48,
+                position: "absolute",
+                right: 48
+              }}
+              icon={<i className="material-icons">help_outline</i>}
+            />
           </Tabs>
         </AppBar>
         <TerminalList
