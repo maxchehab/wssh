@@ -5,7 +5,10 @@ import websocket from "websocket-stream";
 export default class Terminal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { width: "0", height: "0" };
+    this.state = {
+      width: "0",
+      height: "0"
+    };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
 
@@ -36,10 +39,13 @@ export default class Terminal extends React.Component {
   }
 
   render() {
+    console.log(
+      this.props.value + ": " + (this.props.currentValue == this.props.value)
+    );
     return (
       <div
         style={{
-          height: this.props.enabled ? "auto" : "0",
+          height: this.props.currentValue == this.props.value ? "auto" : "0",
           overflow: "hidden"
         }}
       >

@@ -4,6 +4,7 @@ import { withStyles } from "material-ui/styles";
 import AppBar from "material-ui/AppBar";
 import Tabs, { Tab } from "material-ui/Tabs";
 import Terminal from "../components/Terminal";
+import TerminalList from "../components/TerminalList";
 
 let tabCount = 0;
 let deleting = false;
@@ -21,6 +22,7 @@ class ScrollableTabsButtonAuto extends React.Component {
     super(props);
     this.state = {
       value: 0,
+      enabled: {},
       tabs: [],
       terminals: []
     };
@@ -35,19 +37,85 @@ class ScrollableTabsButtonAuto extends React.Component {
     let tabs = this.state.tabs.slice();
     let terminals = this.state.terminals.slice();
     let key = tabCount;
-    tabs.push(<Tab label="Terminal" />);
-    terminals.push(<Terminal enabled={key == this.state.value} />);
+    tabs.push(
+      <Tab
+        key={key}
+        onClick={e => {
+          const rect = document
+            .getElementById("icon" + key)
+            .getBoundingClientRect();
+          if (
+            e.clientX >= rect.x &&
+            e.clientX <= rect.width + rect.x &&
+            e.clientY >= rect.y &&
+            e.clientY <= rect.y + rect.height
+          ) {
+            this.removeTerminal(key);
+            e.preventDefault();
+          }
+        }}
+        style={{ height: 48 }}
+        value={key}
+        label="Terminal"
+        icon={
+          <div>
+            <i
+              id={"icon" + key}
+              style={{
+                display: "none",
+                right: 5,
+                position: "absolute",
+                bottom: 14,
+                fontSize: 20
+              }}
+              className="material-icons"
+            >
+              close
+            </i>
+          </div>
+        }
+      />
+    );
+
+    terminals.push(key);
+
     this.setState({
       tabs: tabs,
       terminals: terminals,
       value: key
     });
+
     tabCount++;
   }
 
-  render() {
-    const { value } = this.state;
+  removeTerminal(id) {
+    console.log(id);
+    deleting = true;
+    let tabs = this.state.tabs.slice();
+    let terminals = this.state.terminals.slice();
+    let index = 0;
+    let lastValue = -1;
 
+    for (let tab of tabs) {
+      if (tab.props.value == id) {
+        break;
+      }
+      lastValue = tab.props.value;
+      index++;
+    }
+
+    tabs.splice(index, 1);
+    terminals.slice(index, 1);
+
+    this.setState({
+      tabs: tabs,
+      terminals: terminals,
+      value: id == this.state.value ? lastValue : this.state.value
+    });
+  }
+
+  render() {
+    console.log("this.state.value: " + this.state.value);
     return (
       <div>
         <button onClick={() => this.newTerminal()}>new terminal</button>
@@ -64,10 +132,18 @@ class ScrollableTabsButtonAuto extends React.Component {
             font-family: monospace;
             background-color: black;
           }
+
+          button:hover .material-icons {
+            display: block !important;
+          }
         `}</style>
+        <link
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Material+Icons"
+          rel="stylesheet"
+        />
         <AppBar position="static" color="default">
           <Tabs
-            value={value}
+            value={this.state.value}
             onChange={this.handleChange}
             indicatorColor="primary"
             textColor="primary"
@@ -77,7 +153,10 @@ class ScrollableTabsButtonAuto extends React.Component {
             {this.state.tabs}
           </Tabs>
         </AppBar>
-        {this.state.terminals}
+        <TerminalList
+          currentValue={this.state.value}
+          terminals={this.state.terminals}
+        />
       </div>
     );
   }
