@@ -37,7 +37,12 @@ export default class Terminal extends React.Component {
 
   render() {
     return (
-      <div>
+      <div
+        style={{
+          height: this.props.enabled ? "auto" : "0",
+          overflow: "hidden"
+        }}
+      >
         <style global jsx>{`
           .terminal-cursor {
             background-color: white;
@@ -49,9 +54,11 @@ export default class Terminal extends React.Component {
           }
         `}</style>
         <div
-          style={{ height: this.state.height - 48 }}
+          style={{
+            height: this.state.height - 48
+          }}
           className={"docker-browser-console"}
-          ref="container"
+          ref={"container"}
         />
       </div>
     );
