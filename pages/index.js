@@ -23,8 +23,29 @@ class ScrollableTabsButtonAuto extends React.Component {
     this.state = {
       value: 0,
       enabled: {},
-      tabs: [],
-      terminals: []
+      tabs: [
+        <Tab
+          key={0}
+          onClick={e => {
+            const rect = document
+              .getElementById("icon" + 0)
+              .getBoundingClientRect();
+            if (
+              e.clientX >= rect.x &&
+              e.clientX <= rect.width + rect.x &&
+              e.clientY >= rect.y &&
+              e.clientY <= rect.y + rect.height
+            ) {
+              this.removeTerminal(0);
+              e.preventDefault();
+            }
+          }}
+          style={{ height: 48 }}
+          value={0}
+          label="Terminal"
+        />
+      ],
+      terminals: [0]
     };
   }
 
@@ -115,10 +136,8 @@ class ScrollableTabsButtonAuto extends React.Component {
   }
 
   render() {
-    console.log("this.state.value: " + this.state.value);
     return (
       <div>
-        <button onClick={() => this.newTerminal()}>new terminal</button>
         <style global jsx>{`
           .terminal-cursor {
             background-color: white;
