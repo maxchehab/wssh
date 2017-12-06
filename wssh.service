@@ -4,6 +4,6 @@ Description=Service that manages a webserver.
 
 [Service]
 
-ExecStart=/bin/bash -c "yarn run prod"
+ExecStart=/bin/bash -c "cd /home/mchehab/wssh; yarn run prod"
 [Install]
 WantedBy=multi-user.target
