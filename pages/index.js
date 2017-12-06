@@ -7,7 +7,7 @@ import Tabs, { Tab } from "material-ui/Tabs";
 import Terminal from "../components/Terminal";
 import TerminalList from "../components/TerminalList";
 
-let tabCount = 2;
+let tabCount = 0;
 let deleting = false;
 
 const styles = theme => ({
@@ -24,29 +24,8 @@ class ScrollableTabsButtonAuto extends React.Component {
     this.state = {
       value: 0,
       enabled: {},
-      tabs: [
-        <Tab
-          key={0}
-          onClick={e => {
-            const rect = document
-              .getElementById("icon" + 0)
-              .getBoundingClientRect();
-            if (
-              e.clientX >= rect.x &&
-              e.clientX <= rect.width + rect.x &&
-              e.clientY >= rect.y &&
-              e.clientY <= rect.y + rect.height
-            ) {
-              this.removeTerminal(0);
-              e.preventDefault();
-            }
-          }}
-          style={{ height: 48 }}
-          value={0}
-          label="Terminal"
-        />
-      ],
-      terminals: [0]
+      tabs: [],
+      terminals: []
     };
   }
 
@@ -55,6 +34,10 @@ class ScrollableTabsButtonAuto extends React.Component {
       value: value
     });
   };
+
+  componentDidMount() {
+    this.newTerminal();
+  }
 
   newTerminal() {
     deleting = false;
@@ -137,6 +120,12 @@ class ScrollableTabsButtonAuto extends React.Component {
     });
   }
 
+  componentDidUpdate(nextProps, nextState) {
+    if (!this.state.tabs.length) {
+      this.newTerminal();
+    }
+  }
+
   render() {
     return (
       <div>
@@ -178,19 +167,21 @@ class ScrollableTabsButtonAuto extends React.Component {
           currentValue={this.state.value}
           terminals={this.state.terminals}
         />
-        <Button
-          onClick={() => this.newTerminal()}
-          fab
-          style={{
-            position: "fixed",
-            bottom: 18,
-            right: 18
-          }}
-          color="primary"
-          aria-label="add"
-        >
-          <i className="material-icons">add_to_queue</i>
-        </Button>
+        {this.state.tabs.length < 10 && (
+          <Button
+            onClick={() => this.newTerminal()}
+            fab
+            style={{
+              position: "fixed",
+              bottom: 18,
+              right: 18
+            }}
+            color="primary"
+            aria-label="add"
+          >
+            <i className="material-icons">add_to_queue</i>
+          </Button>
+        )}
       </div>
     );
   }
