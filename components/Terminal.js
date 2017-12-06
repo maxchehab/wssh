@@ -2,6 +2,9 @@ import React from "react";
 import docker from "docker-browser-console";
 import websocket from "websocket-stream";
 
+const dev = process.env.NODE_ENV !== "production";
+const host = dev ? "localhost" : "147.222.165.6";
+
 export default class Terminal extends React.Component {
   constructor(props) {
     super(props);
@@ -28,7 +31,7 @@ export default class Terminal extends React.Component {
     // all other options are forwarded to the term.js instance
     let terminal = docker();
     // connect to a docker-browser-console server
-    terminal.pipe(websocket("ws://localhost:8080")).pipe(terminal);
+    terminal.pipe(websocket("ws://" + host + ":8080")).pipe(terminal);
 
     // append the terminal to a DOM element
     terminal.appendTo(this.refs.container);

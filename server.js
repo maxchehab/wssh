@@ -8,6 +8,7 @@ const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
 const port = dev ? 3000 : 80;
+const host = dev ? "localhost" : "147.222.165.6";
 
 app
   .prepare()
@@ -20,7 +21,7 @@ app
 
     server.listen(port, err => {
       if (err) throw err;
-      console.log("> Ready on http://localhost:" + port);
+      console.log("> Ready on http://" + host + ":" + port);
     });
   })
   .catch(ex => {
