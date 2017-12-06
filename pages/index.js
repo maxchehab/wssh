@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "material-ui/styles";
 import AppBar from "material-ui/AppBar";
+import Button from "material-ui/Button";
 import Tabs, { Tab } from "material-ui/Tabs";
 import Terminal from "../components/Terminal";
 import TerminalList from "../components/TerminalList";
@@ -50,19 +51,9 @@ class ScrollableTabsButtonAuto extends React.Component {
   }
 
   handleChange = (event, value) => {
-    console.log(value);
-    switch (value) {
-      case "new":
-        this.newTerminal();
-        break;
-      case "help":
-        this.toggleHelp();
-        break;
-      default:
-        this.setState({
-          value: value
-        });
-    }
+    this.setState({
+      value: value
+    });
   };
 
   newTerminal() {
@@ -182,32 +173,25 @@ class ScrollableTabsButtonAuto extends React.Component {
             scrollButtons="auto"
           >
             {this.state.tabs}
-            <Tab
-              key={"new"}
-              value={"new"}
-              style={{
-                width: 48,
-                position: "absolute",
-                right: 0
-              }}
-              icon={<i className="material-icons">add_to_queue</i>}
-            />
-            <Tab
-              key={"help"}
-              value={"help"}
-              style={{
-                width: 48,
-                position: "absolute",
-                right: 48
-              }}
-              icon={<i className="material-icons">help_outline</i>}
-            />
           </Tabs>
         </AppBar>
         <TerminalList
           currentValue={this.state.value}
           terminals={this.state.terminals}
         />
+        <Button
+          onClick={() => this.newTerminal()}
+          fab
+          style={{
+            position: "fixed",
+            bottom: 18,
+            right: 18
+          }}
+          color="primary"
+          aria-label="add"
+        >
+          <i className="material-icons">add_to_queue</i>
+        </Button>
       </div>
     );
   }
