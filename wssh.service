@@ -1,0 +1,9 @@
+#/etc/systemd/system/wssh.service
+[Unit]
+Description=Service that manages a webserver.
+
+[Service]
+
+ExecStart=/bin/bash -c "yarn run prod"
+[Install]
+WantedBy=multi-user.target

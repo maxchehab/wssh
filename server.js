@@ -7,7 +7,7 @@ const next = require("next");
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
-const port = dev ? 3000 : 80;
+const port = dev ? 3000 : 3000; // TODO use port 80 for production
 const host = dev ? "localhost" : "147.222.165.6";
 
 app

@@ -113,7 +113,6 @@ class ScrollableTabsButtonAuto extends React.Component {
   }
 
   removeTerminal(id) {
-    console.log(id);
     deleting = true;
     let tabs = this.state.tabs.slice();
     let terminals = this.state.terminals.slice();

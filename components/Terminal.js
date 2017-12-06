@@ -42,9 +42,6 @@ export default class Terminal extends React.Component {
   }
 
   render() {
-    console.log(
-      this.props.value + ": " + (this.props.currentValue == this.props.value)
-    );
     return (
       <div
         style={{
