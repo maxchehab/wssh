@@ -30,8 +30,14 @@ export default class Terminal extends React.Component {
     // use docker({style:false}) to disable default styling
     // all other options are forwarded to the term.js instance
     let terminal = docker();
+
+    let ws = websocket("ws://" + host + ":8080");
+    // ws.socket.addEventListener("error", e => {
+    //   this.componentDidMount();
+    // });
+
     // connect to a docker-browser-console server
-    terminal.pipe(websocket("ws://" + host + ":8080")).pipe(terminal);
+    terminal.pipe(ws).pipe(terminal);
 
     // append the terminal to a DOM element
     terminal.appendTo(this.refs.container);

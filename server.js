@@ -9,6 +9,7 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 const port = dev ? 3000 : 3000; // TODO use port 80 for production
 const host = dev ? "localhost" : "147.222.165.6";
+const dockerfile = dev ? "wssh-dev" : "wssh";
 
 app
   .prepare()
@@ -33,6 +34,7 @@ let dockerServer = new ws.Server({ port: 8080 });
 
 dockerServer.on("connection", function(socket) {
   socket = websocket(socket);
+  console.log(dockerfile);
   // this will spawn the container and forward the output to the browser
-  socket.pipe(docker("wssh")).pipe(socket);
+  socket.pipe(docker(dockerfile)).pipe(socket);
 });
