@@ -1,6 +1,7 @@
 import React from "react";
 import docker from "docker-browser-console";
 import websocket from "websocket-stream";
+import { setTimeout } from "core-js/library/web/timers";
 
 const dev = process.env.NODE_ENV !== "production";
 const host = dev ? "localhost" : "147.222.165.6";
@@ -25,6 +26,7 @@ export default class Terminal extends React.Component {
 
   componentDidMount() {
     this.updateWindowDimensions();
+
     window.addEventListener("resize", this.updateWindowDimensions);
     // create a stream for any docker image
     // use docker({style:false}) to disable default styling
@@ -46,9 +48,11 @@ export default class Terminal extends React.Component {
     // append the terminal to a DOM element
     terminal.appendTo(this.refs.container);
 
-    let event = document.createEvent("HTMLEvents");
-    event.initEvent("resize", true, false);
-    window.dispatchEvent(event);
+    setTimeout(() => {
+      let event = document.createEvent("HTMLEvents");
+      event.initEvent("resize", true, false);
+      window.dispatchEvent(event);
+    }, 100);
   }
 
   render() {
