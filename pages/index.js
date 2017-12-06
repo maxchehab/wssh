@@ -141,6 +141,7 @@ class ScrollableTabsButtonAuto extends React.Component {
           .docker-browser-console {
             font-family: monospace;
             background-color: black;
+            height: 100%;
           }
 
           button:hover .material-icons {
