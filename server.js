@@ -34,7 +34,6 @@ let dockerServer = new ws.Server({ port: 8080 });
 
 dockerServer.on("connection", function(socket) {
   socket = websocket(socket);
-  console.log(dockerfile);
   // this will spawn the container and forward the output to the browser
   socket.pipe(docker(dockerfile)).pipe(socket);
 });

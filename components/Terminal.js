@@ -32,9 +32,13 @@ export default class Terminal extends React.Component {
     let terminal = docker();
 
     let ws = websocket("ws://" + host + ":8080");
-    // ws.socket.addEventListener("error", e => {
-    //   this.componentDidMount();
-    // });
+    ws.socket.addEventListener("error", e => {
+      this.componentDidMount();
+    });
+
+    ws.socket.addEventListener("onclose", e => {
+      this.componentDidMount();
+    });
 
     // connect to a docker-browser-console server
     terminal.pipe(ws).pipe(terminal);

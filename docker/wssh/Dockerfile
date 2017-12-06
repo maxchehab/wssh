@@ -4,4 +4,4 @@ ADD . /docker
 RUN apt-get update && apt-get install -y openssh-client perl
 
 RUN echo '\nStrictHostKeyChecking no\nUserKnownHostsFile /dev/null\nLogLevel QUIET' >> /etc/ssh/ssh_config
-CMD ["perl", "ssh.pl", "192.168.165.1"]
+CMD ["sh", "start.sh"]
