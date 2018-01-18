@@ -22,8 +22,7 @@
     "ws": "^3.3.0"
   },
   "scripts": {
-    "docker":
-      "docker build -t wssh docker/wssh; docker build -t wssh-dev docker/wssh-dev",
+    "docker": "docker build -t wssh docker/wssh; docker build -t wssh-dev docker/wssh-dev",
     "cleanup": "docker kill $(docker ps -q); docker rm $(docker ps -a -q)",
     "build": "next build",
     "prod": "next build && NODE_ENV=production node server",

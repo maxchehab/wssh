@@ -29,6 +29,10 @@ class ScrollableTabsButtonAuto extends React.Component {
     };
   }
 
+  keyHandler = (event) => {
+    document.getElementsByClassName("terminal")[this.state.value].focus()
+  }
+
   handleChange = (event, value) => {
     this.setState({
       value: value
@@ -37,6 +41,7 @@ class ScrollableTabsButtonAuto extends React.Component {
 
   componentDidMount() {
     this.newTerminal();
+    document.addEventListener("keydown", this.keyHandler.bind(this));
   }
 
   newTerminal() {
