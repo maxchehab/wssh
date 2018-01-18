@@ -147,6 +147,10 @@ class ScrollableTabsButtonAuto extends React.Component {
           button:hover .material-icons {
             display: block !important;
           }
+
+          .new-terminal:hover{
+            opacity: 1 !important;
+          }
         `}</style>
         <link
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Material+Icons"
@@ -170,12 +174,15 @@ class ScrollableTabsButtonAuto extends React.Component {
         />
         {this.state.tabs.length < 10 && (
           <Button
+            className="new-terminal"
             onClick={() => this.newTerminal()}
             fab
             style={{
               position: "fixed",
               bottom: 18,
-              right: 18
+              right: 18,
+              opacity: 0.5
+
             }}
             color="primary"
             aria-label="add"

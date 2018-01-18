@@ -3,8 +3,8 @@ import Terminal from "./Terminal";
 
 export default class TerminalList extends React.Component {
   render() {
-    const terminals = this.props.terminals.map(term => (
-      <Terminal currentValue={this.props.currentValue} value={term} />
+    const terminals = this.props.terminals.map((term, i) => (
+      <Terminal currentValue={this.props.currentValue} key={i} value={term} />
     ));
     return <div>{terminals}</div>;
   }
