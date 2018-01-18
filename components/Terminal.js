@@ -21,7 +21,7 @@ export default class Terminal extends React.Component {
   }
 
   updateWindowDimensions() {
-    this.setState({ width: window.innerWidth, height: window.innerHeight });
+    this.setState({ width: window.innerWidth, height: window.innerHeight - 48 });
   }
 
   componentDidMount() {
@@ -65,7 +65,7 @@ export default class Terminal extends React.Component {
       >
         <div
           style={{
-            height: this.state.height - 48
+            height: this.state.height
           }}
           className={"docker-browser-console"}
           ref={"container"}
