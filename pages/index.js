@@ -1,8 +1,10 @@
 import React from "react";
+import axios from 'axios';
 import PropTypes from "prop-types";
 import { withStyles } from "material-ui/styles";
 import AppBar from "material-ui/AppBar";
 import Button from "material-ui/Button";
+import Markdown from "react-remarkable";
 import Tabs, { Tab } from "material-ui/Tabs";
 import Terminal from "../components/Terminal";
 import TerminalList from "../components/TerminalList";
@@ -26,7 +28,8 @@ class ScrollableTabsButtonAuto extends React.Component {
       enabled: {},
       tabs: [],
       terminals: [],
-      helping: false
+      helping: false,
+      cheatsheet: ""
     };
   }
 
@@ -43,6 +46,10 @@ class ScrollableTabsButtonAuto extends React.Component {
   componentDidMount() {
     this.newTerminal();
     document.addEventListener("keydown", this.keyHandler.bind(this));
+    axios.get(`https://raw.githubusercontent.com/maxchehab/wssh/master/cheatsheet.md`)
+      .then(res => {
+        this.setState({ cheatsheet: res.data })
+      });
   }
 
   newTerminal() {
@@ -187,10 +194,12 @@ class ScrollableTabsButtonAuto extends React.Component {
           </div>
           <div style={{
             width: this.state.helping ? "25%" : "0",
+            height: window.innerHeight - 48,
             display: this.state.helping ? "block" : "none",
-            float: "right"
+            float: "right",
+            overflowY: "auto"
           }}>
-            <h1>Help page</h1>
+            <Markdown>{this.state.cheatsheet}</Markdown>
           </div>
         </div>
         {this.state.tabs.length < 10 && (
