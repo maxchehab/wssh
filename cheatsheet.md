@@ -1,5 +1,3 @@
-# Command Line Crash Course
-
 ## Usage
 Note: Hold option (`alt`) and click a position in the current line to move your cursor to that position. 
 
