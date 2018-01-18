@@ -29,7 +29,8 @@ class ScrollableTabsButtonAuto extends React.Component {
       tabs: [],
       terminals: [],
       helping: false,
-      cheatsheet: ""
+      cheatsheet: "",
+      height: 0
     };
   }
 
@@ -50,6 +51,8 @@ class ScrollableTabsButtonAuto extends React.Component {
       .then(res => {
         this.setState({ cheatsheet: res.data })
       });
+
+    this.setState({ height: window.innerHeight - 48 })
   }
 
   newTerminal() {
@@ -194,7 +197,7 @@ class ScrollableTabsButtonAuto extends React.Component {
           </div>
           <div style={{
             width: this.state.helping ? "25%" : "0",
-            height: window.innerHeight - 48,
+            height: this.state.height,
             display: this.state.helping ? "block" : "none",
             float: "right",
             overflowY: "auto"
