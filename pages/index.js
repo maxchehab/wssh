@@ -25,7 +25,8 @@ class ScrollableTabsButtonAuto extends React.Component {
       value: 0,
       enabled: {},
       tabs: [],
-      terminals: []
+      terminals: [],
+      helping: false
     };
   }
 
@@ -173,10 +174,25 @@ class ScrollableTabsButtonAuto extends React.Component {
             {this.state.tabs}
           </Tabs>
         </AppBar>
-        <TerminalList
-          currentValue={this.state.value}
-          terminals={this.state.terminals}
-        />
+        <div>
+          <div style={{
+            width: this.state.helping ? "75%" : "100%",
+            float: "left"
+          }}>
+            <TerminalList
+
+              currentValue={this.state.value}
+              terminals={this.state.terminals}
+            />
+          </div>
+          <div style={{
+            width: this.state.helping ? "25%" : "0",
+            display: this.state.helping ? "block" : "none",
+            float: "right"
+          }}>
+            <h1>Help page</h1>
+          </div>
+        </div>
         {this.state.tabs.length < 10 && (
           <Button
             className="new-terminal"
@@ -194,7 +210,24 @@ class ScrollableTabsButtonAuto extends React.Component {
           >
             <i className="material-icons">add_to_queue</i>
           </Button>
+
         )}
+        <Button
+          className="new-terminal"
+          onClick={() => { this.setState({ helping: !this.state.helping }) }}
+          fab
+          style={{
+            position: "fixed",
+            bottom: 80,
+            right: 18,
+            opacity: 0.5
+
+          }}
+          color="primary"
+          aria-label="help"
+        >
+          <i className="material-icons">{this.state.helping ? "close" : "help"} </i>
+        </Button>
       </div>
     );
   }

@@ -10,7 +10,6 @@ export default class Terminal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      width: "0",
       height: "0"
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
@@ -21,7 +20,7 @@ export default class Terminal extends React.Component {
   }
 
   updateWindowDimensions() {
-    this.setState({ width: window.innerWidth, height: window.innerHeight - 48 });
+    this.setState({ height: window.innerHeight - 48 });
   }
 
   componentDidMount() {
