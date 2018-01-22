@@ -1,214 +1,183 @@
-## Usage
-Note: Hold option (`alt`) and click a position in the current line to move your cursor to that position. 
+File and Directory Commands
+-----
+List all files in current directory `ls -al`
 
-Clear history: `ctrl + l`
+Display the present working directory `pwd`
 
-Clear everything left from current cursor position: `ctrl + u`
+Create a directory `mkdir directory`
 
-Clear everything right from current cursor position: `ctrl + k`
+Remove (delete) file `rm file`
 
-Re-call last input with sudo: `sudo !!`
+Remove the directory and its contents recursively `rm -r directory`
 
-Stop current process: `ctrl + c`
+Force removal of file without prompting for confirmation `rm -f file`
 
-Jump to left: `ctrl + a`
+Forcefully remove directory recursively `rm -rf directory`
 
-Jump to right: `ctrl + e`
+Copy file1 to file1 `cp file1 file2`
 
-Help: `help cd` / `help dir` (...)
+Copy source_directory recursively to destination. If destination exists, copy source_directory into destination, otherwise create destination with the contents of source_directory. `cp -r source_directory destination`
 
-Finding Help: `apropos directory` / `apropos search` (...)
+Rename or move file1 to file2. If file2 is an existing directory, move file1 into directory file2 `mv file1 file2`
 
-Define custom startup screen: `sudo nano /etc/motd`
+Create symbolic link to linkname `ln -s /path/to/file linkname`
 
-Run a script as background process: `python script.py &`
+Create an empty file or update the access and modification times of file. `touch <file>`
 
-List all running process's: `ps aux`
+View the contents of file `cat <file>`
 
-Kill a running process: `sudo kill 12345`
+Browse through a text file `less <file>`
 
+Display the first 10 lines of file `head <file>`
 
-System
------------
+Display the last 10 lines of a file `tail <file>`
 
-Get the current path: `pwd`
+Display the last 10 lines of file and "follow" the file as it grows. `tail -f <file>`
 
-Copy to clipboard: `pwd | pbcopy`
+To go up one level of the directory tree. (Change into the parent directory.) `cd ..`
 
-Paste: `pbpaste`
+To go the the `$HOME` directory `cd`
 
-Get the current hostname: `hostname`
+Change to the /etc directory `cd /etc`
 
-Get the current users: `users`
+C++ Compilation and Debugging
+---
+Compile a C++ program named main.cpp `g++ main.cpp`
 
-Get all info about the environment: `env`
+Compile a C++ program named main.cpp and create an executable main.exe `g++ main.cpp -o main.exe`
 
-Show calendar: `cal`
+Compile a C++ program named main.cpp using C++11 libraries (necessary to use `nullptr`) `g++ main.cpp -std=c++11`
 
-Show today's date: `date`
+SSH Logins
+---
+Connect to host as your local username `ssh host`
 
-Exit terminal: `exit`
+Connect to host as user `ssh user@host`
 
+Connect to host using port `ssh -p port user@host`
 
+Disk Usage
+---
+Show free and used space on mounted filesystems `df -h`
 
-Permissions
------------
-Use `-R` option to change permissions recursively.
+Show free and used inodes on mounted filesystem `df -i`
 
+Display disks partitions sizes and types `fdsisk -l`
 
-List: `ps -ef | grep apache | grep -v grep`
+Display disk usage for all files and directories in human readable format `du -ah`
 
-Change permissions: `chmod 755 index.php`
+Display total disk usage off the current directory `du sh`
 
-Change owner: `chown root index.php` (`root` is the username)
+Search
+--
+Search for regex pattern in file `grep <pattern> <file>`
 
-Change group: `chgrp www-data index.php` (`www-data` is the groupname)
+Search recursively for pattern in directory `grep -r <pattern> <directory>`
 
+Find files and directories by name `locate <name>`
 
-Folder Permissions
------------
+Find files in /home/john that start with "prefix". `find /home/john -name 'prefix'`
 
-Let apache be owner: `chown www-data:www-data -R *`
+Find files larger than 100MB in /home `find /home -size +100M`
 
-Change directory permissions rwxr-xr-x: `find . -type d -exec chmod 755 {} \;`
+Process Management
+---
+Display your currently running processes `ps`
 
-Change file permissions rw-r--r--: `find . -type f -exec chmod 644 {} \;`
+Display all the currently running processes on the system.`ps -ef`
 
+Display process information for processname `ps -ef | grep <proccessname>`
 
-Directories
------------
+Kill process with process ID of pid `kill <pid>`
 
-List directory contents: `ls`
+Kill all processes named processname `killall <processname>`
 
-List all directory contents sorted by time edited: `ls -alt`
+Start program in the background `program &`
 
-List directory (wildcard matching): `ls *.txt`
+Display stopped or background jobs `bg`
 
-List all files of type: `find . -name "*.txt" -print`
+Brings the most recent background job to foreground `fg`
 
+Brings job n to the foreground `fg n`
 
-Go back to previous directory: `cd -`
+System Information
+-----------------------
+Display Linux system information `uname -a`
 
+Display kernel release information `uname -r`
 
-Make (empty) directory: `mkdir sample-dirname`
+Show how long the system has been running + load `uptime`
 
-Remove (empty) directory: `rmdir sample-dirname`
+Show system host name `hostname`
 
-Remove directory with all contents: `rm -rf sample-dirname/`
+Display the IP addresses of the hostname `hostname -I`
 
-Remove directory contents and keep directory: `rm -rf *`
+Show system reboot history `last reboot`
 
-Checkout directory: `cd sample-dirname`
+Show the current date and time `date`
 
-Browsing directories: `pushd sample-dirname` / `popd` / `dirs` 
-(see http://unix.stackexchange.com/a/77081)
+Show this month's calendar `cal`
 
-### Symlinks
+Display who is online `w`
 
-Create symlink: `ln -s source-dirname destination-dirname`
+Who you are logged in as `whoami`
 
-Update symlink: `ln -sfn source-dirname destination-dirname`
+Hardware Information
+-------
+Display messages in kernel ring buffer `dmesg`
 
-Remove symlink: `unlink sample-dirname`
+Display CPU information `cat /proc/cpuinfo`
 
-- `-s`: Create a symbolic link.
-- `-f`: If the target file already exists, then unlink it.
-- `-F`: If the target file already exists and is a directory, then remove/overwrite it.
-- `-h`: If the target file or directory is a symbolic link, do not follow it.
-- `-n`: Same as `-h`, for compatibility with other `ln` implementations.
+Display memory information `cat /proc/meminfo`
 
+Display free and used memory ( -h for human readable, -m for MB, -g for GB.) `free -h`
 
-Files
------------
+Display PCI devices `lspci -tv`
 
-Make (empty) file: `touch sample-filename.txt`
+Display USB devices `lsusb -tv`
 
-Change creation date: `touch –t 201401011337 sample-filename.txt`
+Display DMI/SMBIOS (hardware info) from the BIOS `dmidecode`
 
-Change modified date: `touch –mt 201401011337 sample-filename.txt`
+Show info about disk sda `hdparm -i /dev/sda`
 
-Duplicate file: `cp sample-filename.txt sample-filename-copy.txt`
+Perform a read speed test on disk sda `hdparm -tT /dev/sda`
 
-Copy/Page folder with content: `cp -a folder/ new_folder`
+Test for unreadable blocks on disk sda `badblocks -s /dev/sda`
 
-Move/Rename file: `mv current-filename.txt new-filename.txt`
+Performance Monitoring and Statistics
+---------------
+Display and manage the top processes `top`
 
-Move/Rename file and prompt before overwriting an existing file: `mv -i current-filename.txt new-filename.txt`
+Interactive process viewer (top alternative) `htop`
 
-Remove file: `rm sample-filename.txt`
+Display processor related statistics `mpstat 1`
 
-View file: `less sample-filename.txt` / `more sample-filename.txt`
+Display virtual memory statistics `vmstat 1`
 
-Write to file (will overwrite existing content): `cat > sample-filename.txt` (quit with `ctrl+d`)
+Display I/O statistics `iostat 1`
 
-Search for a filename (not content!) in the current directory: `find sample-filename.txt`
+Display the last 100 syslog messages `tail 100 /var/log/syslog`
 
-Search for a string (not filename!) inside all files in the current directory: `ack "string" --php` ([documentation](https://beyondgrep.com/documentation/))
+Capture and display all packets on interface eth0 `tcpdump -i eth0`
 
-Search for a string inside all files in the current directory and subdrectories: `grep -r "string" *`
+Monitor all traffic on port 80 ( HTTP ) `tcpdump -i eth0 'port 80'`
 
-Search and replace within file: `sed -i '' 's/original-text/new-text/g' sample-filename.txt`
+List all open files on the system `lsof`
 
-MD5 hash for files: `md5 sample-filename.txt` 
+List files opened by user `lsof -u <user>`
 
-MD5 hash for folders: `tar c folder | md5sum`
+Display free and used memory ( -h for human readable, -m for MB, -g for GB.) `free -h`
 
-Encrypt file: `openssl enc -aes-256-cbc -e -in sample-filename.txt -out sample-encrypted.txt`
+User Information and Management
+--------------
+Display the user and group ids of your current user. `id`
 
-Decrypt file: `openssl enc -aes-256-cbc -d -in sample-encrypted.txt -out sample-filename.txt`
+Display the last users who have logged onto the system.  `last`
 
+Create a group named "test". `groupadd test`
 
-Server
------------
-Access via ssh: `ssh pi@192.168.0.0`
+Create an account named john, with a comment of "John Smith" and create the user's home directory. `useradd -c "John Smith" -m john`
 
-Copy file from server to local: `scp pi@192.168.0.0:/path/to/file.png ~/Desktop/` 
-(use `-r` to recursively get complete folder)
+Delete the john account. `userdel john`
 
-Copy file from local to server: `scp ~/Desktop/file.png pi@192.168.0.0:/path/to/folder ` 
-(use `-r` to recursively get complete folder)
-
-Escape files with spaces in name like this: `/path/to/file\\\ name.png`
-
-
-Variables
------------
-
-Register variable: `export TESTING="Sample Text"`
-
-Echo variable: `echo $TESTING`
-
-Unset variable: `unset TESTING`
-
-
-Output & Redirects
------------
-
-Write to file: `echo "Hello" > hello.txt`
-
-Append content from a file to another file: `cat file1.txt >> file2.txt`
-
-Add the amount of lines, words, and characters to `file2.txt`: `cat file1.txt | wc | cat > file2.txt`
-
-Sort the content of a file (like `cat`): `sort hello.txt`
-
-Save to sorted content to a new file: `cat file1.txt | sort > sorted-file1.txt`
-
-Sort and remove duplicates and save to a new file: `sort file1.txt | uniq > uniq-file1.txt`
-
-
-Functions
------------
-Calculate (returns only `int`): `echo $((123/2))`
-
-
-Web
------------
-Check site feedback: `ping google.com`
-
-Show site IP: `dig +short google.com`
-
-Show A Record: `dig a google.com` (Returns: `google.com.	43	IN	A	123.123.123.123` aka `public-name ttl internet record-type server-address`)
-
-Webservice: https://www.whatsmydns.net/
-
+Add the john account to the sales group `usermod -aG sales john`
