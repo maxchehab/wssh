@@ -9,6 +9,8 @@ import Tabs, { Tab } from "material-ui/Tabs";
 import Terminal from "../components/Terminal";
 import TerminalList from "../components/TerminalList";
 import MarkdownStyle from "../components/MarkdownStyle";
+import UUID from "uuid/v4";
+
 
 let tabCount = 0;
 let deleting = false;
@@ -31,7 +33,8 @@ class ScrollableTabsButtonAuto extends React.Component {
       terminals: [],
       helping: false,
       cheatsheet: "",
-      height: 0
+      height: 0,
+      session: UUID()
     };
   }
 
@@ -194,6 +197,7 @@ class ScrollableTabsButtonAuto extends React.Component {
             <TerminalList
               currentValue={this.state.value}
               terminals={this.state.terminals}
+              session={this.state.session}
             />
           </div>
           <div className="markdown-body" style={{

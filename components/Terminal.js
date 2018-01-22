@@ -1,6 +1,6 @@
 import React from "react";
 import docker from "docker-browser-console";
-import websocket from "websocket-stream";
+import WebSocketStream from "websocket-stream";
 import { setTimeout } from "core-js/library/web/timers";
 
 const dev = process.env.NODE_ENV !== "production";
@@ -31,9 +31,14 @@ export default class Terminal extends React.Component {
     // create a stream for any docker image
     // use docker({style:false}) to disable default styling
     // all other options are forwarded to the term.js instance
-    let terminal = docker();
+    const terminal = docker();
 
-    let ws = websocket("ws://" + host + ":8080");
+    const pingWS = new WebSocket("ws://" + host + ":8081?session=" + this.props.session)
+    pingWS.onmessage = (event) => {
+      pingWS.send(event.data);
+    }
+
+    const ws = WebSocketStream("ws://" + host + ":8080?session=" + this.props.session);
     ws.socket.addEventListener("error", e => {
       this.componentDidMount();
     });
