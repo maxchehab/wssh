@@ -9,10 +9,11 @@ const next = require("next");
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
-const port = dev ? 3000 : 3000; // TODO use port 80 for production
-const host = dev ? "localhost" : "147.222.165.6";
+const host = dev ? "localhost" : "adaweb.gonzaga.edu";
 const dockerfile = dev ? "wssh-dev" : "wssh";
 
+const echoPort = dev ? 8081 : 8083;
+const dockerPort = dev ? 8080 : 8082;
 app
   .prepare()
   .then(() => {
@@ -22,9 +23,9 @@ app
       return handle(req, res);
     });
 
-    server.listen(port, err => {
+    server.listen(3000, err => {
       if (err) throw err;
-      console.log("> Ready on http://" + host + ":" + port);
+      console.log("> Ready on http://" + host + ":" + 3000);
     });
   })
   .catch(ex => {
@@ -33,7 +34,7 @@ app
 
 
 let containers = {};
-let dockerServer = new ws.Server({ port: 8080 });
+let dockerServer = new ws.Server({ port: dockerPort });
 dockerServer.on("connection", (socket, request) => {
   let query = url.parse(request.url, true).query;
   socket = websocket(socket);
@@ -44,7 +45,7 @@ dockerServer.on("connection", (socket, request) => {
   socket.pipe(container).pipe(socket);
 });
 
-let echoServer = new ws.Server({ port: 8081 });
+let echoServer = new ws.Server({ port: echoPort });
 echoServer.on("connection", (socket, request) => {
   let query = url.parse(request.url, true).query;
 

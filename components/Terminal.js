@@ -4,7 +4,8 @@ import WebSocketStream from "websocket-stream";
 import { setTimeout } from "core-js/library/web/timers";
 
 const dev = process.env.NODE_ENV !== "production";
-const host = dev ? "localhost" : "147.222.165.6";
+const host = dev ? "localhost" : "adaweb.gonzaga.edu";
+const websocketProtocal = dev ? "ws://" : "wss://";
 
 export default class Terminal extends React.Component {
   constructor(props) {
@@ -33,12 +34,12 @@ export default class Terminal extends React.Component {
     // all other options are forwarded to the term.js instance
     const terminal = docker();
 
-    const pingWS = new WebSocket("ws://" + host + ":8081?session=" + this.props.session)
+    const pingWS = new WebSocket(websocketProtocal + host + ":8081?session=" + this.props.session)
     pingWS.onmessage = (event) => {
       pingWS.send(event.data);
     }
 
-    const ws = WebSocketStream("ws://" + host + ":8080?session=" + this.props.session);
+    const ws = WebSocketStream(websocketProtocal + host + ":8080?session=" + this.props.session);
     ws.socket.addEventListener("error", e => {
       this.componentDidMount();
     });
