@@ -63,7 +63,7 @@ echoServer.on("connection", (socket, request) => {
     socket.send(query.session, (error) => { })
 
     timeout = setTimeout(destroy, 1000);
-  }, 5000);
+  }, 3600000);
 
   socket.on('message', function incoming(message) {
     clearTimeout(timeout);
