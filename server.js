@@ -39,9 +39,12 @@ dockerServer.on("connection", (socket, request) => {
   let query = url.parse(request.url, true).query;
   socket = websocket(socket);
   // this will spawn the container and forward the output to the browser
-  let container = docker(dockerfile);
-  if (!containers[query.session]) containers[query.session] = [];
-  containers[query.session].push(container);
+  let container = docker(dockerfile, (child) => {
+    container.id = child.id;
+    if (!containers[query.session]) containers[query.session] = [];
+    containers[query.session].push(container);
+  });
+
   socket.pipe(container).pipe(socket);
 });
 

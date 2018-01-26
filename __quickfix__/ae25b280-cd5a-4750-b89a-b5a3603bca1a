@@ -3,12 +3,12 @@ var ndjson = require("ndjson");
 var run = require("docker-run");
 var xtend = require("xtend");
 
-module.exports = function(image, opts) {
+module.exports = function (image, onStart, opts) {
   var input = ndjson.parse();
   var output = ndjson.stringify();
   var result = duplexify();
 
-  input.once("data", function(handshake) {
+  input.once("data", function (handshake) {
     if (handshake.type !== "run")
       return result.destroy(new Error("Invalid handshake"));
 
@@ -21,34 +21,38 @@ module.exports = function(image, opts) {
       })
     );
 
-    input.on("data", function(data) {
+    input.on("data", function (data) {
       if (data.type === "resize") child.resize(data.width, data.height);
       if (data.type === "stdin") child.stdin.write(data.data);
     });
 
-    child.stdout.on("data", function(data) {
+    child.stdout.on("data", function (data) {
       output.write({
         type: "stdout",
         data: data.toString()
       });
     });
 
-    child.stderr.on("data", function(data) {
+    child.stderr.on("data", function (data) {
       output.write({
         type: "stderr",
         data: data.toString()
       });
     });
 
-    child.on("exit", function() {
+    child.on("exit", function () {
       result.destroy();
     });
+    
+    child.on("start", function () {
+      onStart(child);
+    })
 
-    child.on("error", function(err) {
+    child.on("error", function (err) {
       result.destroy(err);
     });
 
-    result.on("close", function() {
+    result.on("close", function () {
       child.kill();
     });
   });
