@@ -2,6 +2,7 @@ import React from "react";
 import docker from "docker-browser-console";
 import WebSocketStream from "websocket-stream";
 import { setTimeout } from "core-js/library/web/timers";
+import { homedir } from "os";
 
 const dev = process.env.NODE_ENV !== "production";
 const host = dev ? "localhost" : "adaweb.gonzaga.edu";
@@ -11,7 +12,8 @@ export default class Terminal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      height: "0"
+      height: "0",
+      cwd: "~"
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
@@ -48,6 +50,18 @@ export default class Terminal extends React.Component {
       this.componentDidMount();
     });
 
+    ws.socket.addEventListener("message", e => {
+      let decoder = new TextDecoder();
+      const message = JSON.parse(decoder.decode(e.data)).data;
+      const dirRegex = new RegExp("@ada:((.+)\/([^/]+))\$");
+
+      if (message.indexOf("ada:~\$") != -1) {
+        this.setState({ cwd: "~" })
+      } else if (dirRegex.exec(message)) {
+        this.setState({ cwd: message.split("@ada:")[2].split("$")[0] });
+      }
+      console.log(this.state.cwd)
+    })
     // connect to a docker-browser-console server
     terminal.pipe(ws).pipe(terminal);
 

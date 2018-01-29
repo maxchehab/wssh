@@ -35,9 +35,13 @@ app
 
 let containers = {};
 let dockerServer = new ws.Server({ port: dockerPort });
-dockerServer.on("connection", (socket, request) => {
+dockerServer.on("connection", (s, request) => {
   let query = url.parse(request.url, true).query;
-  socket = websocket(socket);
+  s.on('message', (e) => {
+    // Retrieve username and password here
+    // console.log(e);
+  })
+  socket = websocket(s);
   // this will spawn the container and forward the output to the browser
   let container = docker(dockerfile, (child) => {
     container.id = child.id;
