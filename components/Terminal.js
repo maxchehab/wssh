@@ -66,16 +66,16 @@ export default class Terminal extends React.Component {
       const message = JSON.parse(decoded).data;
       const dirRegex = new RegExp("@ada:((.+)\/([^/]+))\$");
 
-      if (message.indexOf("ada:~\$") != -1) {
+      if (message.indexOf("@ada:~\$") != -1) {
         this.setState({
           cwd: "~",
-          user: decoded.split("\\u0007")[1].split("@ada")[0]
-        })
+          user: this.getUser(decoded)
+        });
       } else if (dirRegex.exec(message)) {
         this.setState({
           cwd: message.split("@ada:")[2].split("$")[0],
-          user: decoded.split("\\u0007")[1].split("@ada")[0]
-        })
+          user: this.getUser(decoded)
+        });
       }
     })
     // connect to a docker-browser-console server
@@ -89,6 +89,10 @@ export default class Terminal extends React.Component {
       event.initEvent("resize", true, false);
       window.dispatchEvent(event);
     }, 100);
+  }
+
+  getUser(decoded) {
+    return decoded.split("\\u0007")[1].split("@ada")[0]
   }
 
   render() {

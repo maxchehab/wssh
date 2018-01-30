@@ -48,6 +48,8 @@ class Index extends React.Component {
     window.dispatchEvent(new Event('resize'));
     if (key == this.state.value && value != undefined) {
       document.title = value;
+    } else {
+      document.title = "adaweb.gonzaga.edu"
     }
   }
 
@@ -60,7 +62,11 @@ class Index extends React.Component {
       value: value
     });
 
-    document.title = this.state.tabLabels[value];
+    if (this.state.tabLabels[value] != undefined) {
+      document.title = this.state.tabLabels[value];
+    } else {
+      document.title = "adaweb.gonzaga.edu"
+    }
 
   };
 
