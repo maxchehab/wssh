@@ -200,6 +200,8 @@ class Index extends React.Component {
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Material+Icons"
           rel="stylesheet"
         />
+        <link rel="icon" href="/static/favicon.ico" />
+        <title>adaweb.gonzaga.edu</title>
         <AppBar position="static" color="default">
           <Tabs
             value={this.state.value}
