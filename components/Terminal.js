@@ -13,7 +13,8 @@ export default class Terminal extends React.Component {
     super(props);
     this.state = {
       height: "0",
-      cwd: "~"
+      cwd: "~",
+      user: ""
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
@@ -26,12 +27,21 @@ export default class Terminal extends React.Component {
     this.setState({ height: window.innerHeight - 48 });
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.cwd != this.state.cwd || prevState.user != this.state.user) {
+      this.props.changeHeader(this.props.value, this.state.user + "@ada: " + this.state.cwd)
+    }
+  }
+
+
   componentDidMount() {
     this.setState({ height: window.innerHeight - 48 });
     this.updateWindowDimensions();
 
     window.addEventListener("resize", this.updateWindowDimensions);
     // create a stream for any docker image
+
+
     // use docker({style:false}) to disable default styling
     // all other options are forwarded to the term.js instance
     const terminal = docker();
@@ -52,15 +62,21 @@ export default class Terminal extends React.Component {
 
     ws.socket.addEventListener("message", e => {
       let decoder = new TextDecoder();
-      const message = JSON.parse(decoder.decode(e.data)).data;
+      const decoded = decoder.decode(e.data);
+      const message = JSON.parse(decoded).data;
       const dirRegex = new RegExp("@ada:((.+)\/([^/]+))\$");
 
       if (message.indexOf("ada:~\$") != -1) {
-        this.setState({ cwd: "~" })
+        this.setState({
+          cwd: "~",
+          user: decoded.split("\\u0007")[1].split("@ada")[0]
+        })
       } else if (dirRegex.exec(message)) {
-        this.setState({ cwd: message.split("@ada:")[2].split("$")[0] });
+        this.setState({
+          cwd: message.split("@ada:")[2].split("$")[0],
+          user: decoded.split("\\u0007")[1].split("@ada")[0]
+        })
       }
-      console.log(this.state.cwd)
     })
     // connect to a docker-browser-console server
     terminal.pipe(ws).pipe(terminal);

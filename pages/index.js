@@ -23,7 +23,7 @@ const styles = theme => ({
   }
 });
 
-class ScrollableTabsButtonAuto extends React.Component {
+class Index extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -31,11 +31,18 @@ class ScrollableTabsButtonAuto extends React.Component {
       enabled: {},
       tabs: [],
       terminals: [],
+      terminalHeaders: [],
       helping: false,
       cheatsheet: "",
       height: 0,
       session: UUID()
     };
+    this.changeHeader = this.changeHeader.bind(this);
+  }
+
+  changeHeader = (key, value) => {
+    document.getElementById("tabLabel" + key).innerHTML = value;
+    window.dispatchEvent(new Event('resize'));
   }
 
   keyHandler = (event) => {
@@ -46,6 +53,7 @@ class ScrollableTabsButtonAuto extends React.Component {
     this.setState({
       value: value
     });
+
   };
 
   componentDidMount() {
@@ -63,7 +71,11 @@ class ScrollableTabsButtonAuto extends React.Component {
     deleting = false;
     let tabs = this.state.tabs.slice();
     let terminals = this.state.terminals.slice();
+    let terminalHeaders = this.state.terminalHeaders.slice();
+    terminalHeaders.push("Terminal");
     let key = tabCount;
+
+
     tabs.push(
       <Tab
         key={key}
@@ -83,7 +95,12 @@ class ScrollableTabsButtonAuto extends React.Component {
         }}
         style={{ height: 48, minWidth: 160 }}
         value={key}
-        label="Terminal"
+        label={
+          <span style={{
+            fontFamily: "monospace",
+            textTransform: "none",
+            fontSize: 14,
+          }} id={"tabLabel" + key}>Terminal</span>}
         icon={
           <div>
             <i
@@ -108,6 +125,7 @@ class ScrollableTabsButtonAuto extends React.Component {
 
     this.setState({
       tabs: tabs,
+      terminalHeaders: terminalHeaders,
       terminals: terminals,
       value: key
     });
@@ -140,9 +158,13 @@ class ScrollableTabsButtonAuto extends React.Component {
     });
   }
 
-  componentDidUpdate(nextProps, nextState) {
+  componentDidUpdate(prevProps, prevState) {
     if (!this.state.tabs.length) {
       this.newTerminal();
+    }
+
+    if (prevState.terminalHeaders != this.state.terminalHeaders) {
+      console.log("Headers just changed!");
     }
   }
 
@@ -198,6 +220,7 @@ class ScrollableTabsButtonAuto extends React.Component {
               currentValue={this.state.value}
               terminals={this.state.terminals}
               session={this.state.session}
+              changeHeader={this.changeHeader}
             />
           </div>
           <div className="markdown-body" style={{
@@ -253,8 +276,8 @@ class ScrollableTabsButtonAuto extends React.Component {
   }
 }
 
-ScrollableTabsButtonAuto.propTypes = {
+Index.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(ScrollableTabsButtonAuto);
+export default withStyles(styles)(Index);
