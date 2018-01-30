@@ -27,11 +27,11 @@ class Index extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      tabLabels: {},
       value: 0,
       enabled: {},
       tabs: [],
       terminals: [],
-      terminalHeaders: [],
       helping: false,
       cheatsheet: "",
       height: 0,
@@ -41,8 +41,14 @@ class Index extends React.Component {
   }
 
   changeHeader = (key, value) => {
+    let tabLabels = this.state.tabLabels;
+    tabLabels[key] = value;
+    this.setState({ tabLabels });
     document.getElementById("tabLabel" + key).innerHTML = value;
     window.dispatchEvent(new Event('resize'));
+    if (key == this.state.value) {
+      document.title = value;
+    }
   }
 
   keyHandler = (event) => {
@@ -53,6 +59,8 @@ class Index extends React.Component {
     this.setState({
       value: value
     });
+
+    document.title = this.state.tabLabels[value];
 
   };
 
@@ -71,8 +79,6 @@ class Index extends React.Component {
     deleting = false;
     let tabs = this.state.tabs.slice();
     let terminals = this.state.terminals.slice();
-    let terminalHeaders = this.state.terminalHeaders.slice();
-    terminalHeaders.push("Terminal");
     let key = tabCount;
 
 
@@ -125,7 +131,6 @@ class Index extends React.Component {
 
     this.setState({
       tabs: tabs,
-      terminalHeaders: terminalHeaders,
       terminals: terminals,
       value: key
     });
@@ -161,10 +166,6 @@ class Index extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (!this.state.tabs.length) {
       this.newTerminal();
-    }
-
-    if (prevState.terminalHeaders != this.state.terminalHeaders) {
-      console.log("Headers just changed!");
     }
   }
 
