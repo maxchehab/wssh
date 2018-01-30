@@ -10,6 +10,7 @@ import Terminal from "../components/Terminal";
 import TerminalList from "../components/TerminalList";
 import MarkdownStyle from "../components/MarkdownStyle";
 import UUID from "uuid/v4";
+import ReactGA from 'react-ga';
 
 
 let tabCount = 0;
@@ -71,6 +72,9 @@ class Index extends React.Component {
   };
 
   componentDidMount() {
+    ReactGA.initialize('UA-85511623-2');
+    ReactGA.pageview(window.location.pathname + window.location.search);
+
     this.newTerminal();
     document.addEventListener("keydown", this.keyHandler.bind(this));
     axios.get(`https://raw.githubusercontent.com/maxchehab/wssh/master/cheatsheet.md`)
@@ -80,6 +84,8 @@ class Index extends React.Component {
 
     this.setState({ height: window.innerHeight - 48 })
   }
+
+
 
   newTerminal() {
     deleting = false;
@@ -178,6 +184,8 @@ class Index extends React.Component {
   render() {
     return (
       <div>
+
+
         <style global jsx>{`
           .terminal-cursor {
             background-color: white;

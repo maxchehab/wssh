@@ -14,6 +14,7 @@
     "npm": "^5.5.1",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
+    "react-ga": "^2.4.1",
     "react-markdown": "^3.1.4",
     "react-panelgroup": "^1.0.2",
     "react-rnd": "^7.1.5",
@@ -24,7 +25,7 @@
     "ws": "^3.3.0"
   },
   "scripts": {
-    "docker": "docker build -t wssh docker/wssh; docker build -t wssh-dev docker/wssh-dev",
+    "docker": "docker build -t wssh docker/wssh",
     "cleanup": "docker kill $(docker ps -q); docker rm $(docker ps -a -q)",
     "build": "next build",
     "prod": "next build && NODE_ENV=production node server",

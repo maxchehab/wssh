@@ -10,7 +10,7 @@ const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
 const host = dev ? "localhost" : "adaweb.gonzaga.edu";
-const dockerfile = dev ? "wssh-dev" : "wssh";
+const dockerfile = "wssh";
 
 const echoPort = dev ? 8081 : 8083;
 const dockerPort = dev ? 8080 : 8082;
