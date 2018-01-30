@@ -1,5 +1,6 @@
 #/bin/bash
 
-while /bin/true; do
-    perl ssh.pl 192.168.165.1
+while /bin/true; 
+do
+    perl ssh.pl ada.gonzaga.edu
 done
