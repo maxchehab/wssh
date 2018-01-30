@@ -46,7 +46,7 @@ class Index extends React.Component {
     this.setState({ tabLabels });
     document.getElementById("tabLabel" + key).innerHTML = value;
     window.dispatchEvent(new Event('resize'));
-    if (key == this.state.value) {
+    if (key == this.state.value && value != undefined) {
       document.title = value;
     }
   }
