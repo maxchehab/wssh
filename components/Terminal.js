@@ -33,7 +33,6 @@ export default class Terminal extends React.Component {
     }
   }
 
-
   componentDidMount() {
     this.setState({ height: window.innerHeight - 48 });
     this.updateWindowDimensions();
