@@ -63,20 +63,13 @@ export default class Terminal extends React.Component {
     ws.socket.addEventListener("message", e => {
       let decoder = new TextDecoder();
       const decoded = decoder.decode(e.data);
-      const message = JSON.parse(decoded).data;
-      const dirRegex = new RegExp("@ada:((.+)\/([^/]+))\$");
+      const pathRegex = new RegExp("@ada: (.*)\\\\u0007\\\\u001b\\[01;32m");
+      const userRegex = new RegExp("\\\\u001b]0;(.*)@ada:");
+      const path = pathRegex.exec(decoded);
+      const user = userRegex.exec(decoded);
 
-      if (message.indexOf("@ada:~\$") != -1) {
-        this.setState({
-          cwd: "~",
-          user: this.getUser(decoded)
-        });
-      } else if (dirRegex.exec(message)) {
-        this.setState({
-          cwd: message.split("@ada:")[2].split("$")[0],
-          user: this.getUser(decoded)
-        });
-      }
+      path ? this.setState({ cwd: path[1] }) : false;
+      user ? this.setState({ user: user[1] }) : false;
     })
     // connect to a docker-browser-console server
     terminal.pipe(ws).pipe(terminal);
