@@ -28,7 +28,7 @@
     "docker": "docker build -t wssh docker/wssh",
     "cleanup": "docker kill $(docker ps -q) && docker rm $(docker ps -a -q)",
     "build": "next build",
-    "prod": "docker kill $(docker ps -q) && docker rm $(docker ps -a -q) && && docker build -t wssh docker/wssh && next build && NODE_ENV=production node server",
+    "prod": "docker kill $(docker ps -q) && docker rm $(docker ps -a -q) && docker build -t wssh docker/wssh && next build && NODE_ENV=production node server",
     "start": "node server",
     "postinstall": "quickfix"
   },
