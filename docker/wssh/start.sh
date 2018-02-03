@@ -3,5 +3,5 @@
 while /bin/true; 
 do
     clear
-    perl ssh.pl ada.gonzaga.edu
+    perl ssh.pl
 done

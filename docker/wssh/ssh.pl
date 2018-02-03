@@ -6,17 +6,19 @@ open(my $fh, '<', "init.sh") or die "cannot open file"; {
 }
 close($fh);
 
-
-my @u_a = $ARGV[0];
-
-
 print "Enter your username: ";
 my $username = <STDIN>;
 chomp ( $username );
 $username =~ s/[^a-zA-Z0-9]//g;
 if ($username eq ""){
-    print "Invalid username.\n"
+    print "Invalid username.\n";
 }else {
-    exec ("/usr/bin/ssh -t $username\@$u_a[0] '$init'");
+    print "$username\@ada.gonzaga.edu's password: ";
+    use Term::ReadKey;
+    ReadMode('noecho');
+    my $password = ReadLine(0);
+    ReadMode('normal');
+    print "\n";
+    my $status = system ("sshpass -p '$password' ssh -t $username\@ada.gonzaga.edu '$init'");
+    exec("echo $status");
 }
-    
