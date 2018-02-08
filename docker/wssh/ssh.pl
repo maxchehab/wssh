@@ -32,6 +32,7 @@ if ($username eq ""){
     ReadMode('noecho');
     my $password = ReadLine(0);
     ReadMode('normal');
+    $password =~ s/[\n\r]//g;
 
     open(my $pfh, '>', "password") or die "cannot open file";
     print $pfh "$password";

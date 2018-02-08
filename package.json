@@ -7,6 +7,7 @@
     "axios": "^0.17.1",
     "bufferutil": "^3.0.3",
     "docker-browser-console": "^6.0.0",
+    "dockerode": "^2.5.3",
     "express": "^4.16.2",
     "express-fileupload": "^0.4.0",
     "fs": "^0.0.1-security",
@@ -21,16 +22,17 @@
     "react-rnd": "^7.1.5",
     "react-split-pane": "^0.1.68",
     "react-tap-event-plugin": "^3.0.2",
+    "ssh2-sftp-client": "^2.0.1",
     "uuid": "^3.2.1",
     "websocket-stream": "^5.1.1",
     "ws": "^3.3.0"
   },
   "scripts": {
     "docker": "docker build -t wssh docker/wssh",
-    "cleanup": "docker kill $(docker ps -q) && docker rm $(docker ps -a -q)",
+    "cleanup": "docker kill $(docker ps -q) && docker rm $(docker ps -a -q) && rm -rf tmp",
     "build": "next build",
-    "prod": "docker kill $(docker ps -q) && docker rm $(docker ps -a -q) && docker build -t wssh docker/wssh && next build && NODE_ENV=production node server",
-    "start": "node server",
+    "prod": "docker kill $(docker ps -q) && docker rm $(docker ps -a -q); docker build -t wssh docker/wssh && mkdir tmp; next build && NODE_ENV=production node server",
+    "start": "mkdir tmp; node server",
     "postinstall": "quickfix"
   },
   "devDependencies": {

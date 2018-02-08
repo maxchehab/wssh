@@ -91,12 +91,12 @@ export default class Terminal extends React.Component {
 
     let that = this;
     new Dropzone(this.refs.container, {
-      url: "/upload",
-      uploadMultiple: true,
+      url: "/upload?session=" + this.props.session,
+      uploadMultiple: false,
       createImageThumbnails: false,
       previewTemplate: '<div style="display:none"></div>',
 
-      init: function() {
+      init: function () {
         this.on("addedfile", file => {
           console.log(file);
         });
@@ -106,12 +106,14 @@ export default class Terminal extends React.Component {
         this.on("dragleave", event => {
           that.setState({ fileHover: false });
         });
-        this.on("sending", function(file, xhr, formData) {
+        this.on("sending", (file, xhr, formData) => {
+          console.log(formData);
           formData.append(
             "data",
             JSON.stringify({
               user: that.state.user,
-              path: that.state.cwd
+              path: that.state.cwd,
+              fullPath: that.state.cwd + "/" + (file.fullPath || file.name)
             })
           );
         });
