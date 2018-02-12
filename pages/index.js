@@ -11,6 +11,7 @@ import TerminalList from "../components/TerminalList";
 import MarkdownStyle from "../components/MarkdownStyle";
 import UUID from "uuid/v4";
 import ReactGA from "react-ga";
+import 'babel-polyfill';
 
 let tabCount = 0;
 let deleting = false;
@@ -77,7 +78,7 @@ class Index extends React.Component {
     document.addEventListener("keydown", this.keyHandler.bind(this));
     axios
       .get(
-        `https://raw.githubusercontent.com/maxchehab/wssh/master/cheatsheet.md`
+      `https://raw.githubusercontent.com/maxchehab/wssh/master/cheatsheet.md`
       )
       .then(res => {
         this.setState({ cheatsheet: res.data });

@@ -10,8 +10,9 @@ const next = require("next");
 const { StringDecoder } = require("string_decoder");
 const UUID = require('uuid/v4');
 const SFTPClient = require('ssh2-sftp-client');
+const AsyncLock = require('async-lock');
 
-
+let lock = new AsyncLock();
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -20,6 +21,7 @@ const host = dev ? "localhost" : "adaweb.gonzaga.edu";
 const dockerfile = "wssh";
 
 let containers = {};
+let sftpClients = {};
 
 const echoPort = dev ? 8081 : 8083;
 const dockerPort = dev ? 8080 : 8082;
@@ -42,49 +44,56 @@ app
       if (fullPath.charAt(0) == "~") {
         fullPath = "/home/" + user + fullPath.substring(1);
       }
-      const directory = path.dirname(fullPath);
-
       if (containers[session]) {
         for (let c of containers[session]) {
           const credentials = extractCredentials(c.id);
           if (!credentials.error && credentials.username == user) {
-            let sftp = new SFTPClient();
-            sftp.connect({
-              host: 'ada.gonzaga.edu',
-              port: '22',
-              username: credentials.username,
-              password: credentials.password
-            }).then(() => {
-              if (Object.size(req.files)) {
-                for (let f in req.files) {
-                  if (req.files.hasOwnProperty(f)) {
-                    sftp.mkdir(directory, true).then(() => {
-                      {
-                        sftp.put(req.files[f].data, fullPath, false);
-                      }
-                    });
-                  }
-                }
+            const key = credentials.username + credentials.password;
+            lock.acquire(key, function (done) {
+              console.log("lock has been opened");
+              if (sftpClients[key]) {
+                upload(sftpClients[key], req.files, fullPath, done);
               } else {
-                sftp.mkdir(directory, true).then(() => {
-                  {
-                    sftp.put(new Buffer(0), fullPath, false);
-                  }
+                let client = new SFTPClient();
+
+                client.connect({
+                  host: 'ada.gonzaga.edu',
+                  port: '22',
+                  username: credentials.username,
+                  password: credentials.password
+                }).then(() => {
+                  setTimeout(() => {
+                    lock.acquire(key, function (done) {
+                      sftpClients[key].end().then(() => {
+                        sftpClients[key] = undefined;
+                        console.log("successfuly ended sftp client");
+                        done();
+                      }).catch(() => {
+                        sftpClients[key] = undefined;
+                        console.log("error ending sftp client");
+                        done();
+                      });
+                    });
+                  }, 10000);
+                  sftpClients[key] = client;
+                  upload(sftpClients[key], req.files, fullPath, done);
+                }).catch(e => {
+                  sftpClients[key] = undefined;
+                  done();
                 });
               }
-            }).catch(e => {
-              console.log(e);
+            }).then((err, ret) => {
+              if (err) { console.log(err) }
+              console.log("lock has been free'd");
             });
-
+            break;
           }
         }
       } else {
-        console.log("error");
+        console.log("session: " + session + " not created.");
       }
-
       res.status(200).send("success");
     });
-
     server.listen(3000, err => {
       if (err) throw err;
       console.log("> Ready on http://" + host + ":" + 3000);
@@ -136,7 +145,6 @@ echoServer.on("connection", (socket, request) => {
   });
 });
 
-
 function extractCredentials(id) {
   try {
     let username = execSync("docker exec " + id + " bash -c '[ -f username ] && cat username'");
@@ -159,3 +167,30 @@ Object.size = function (obj) {
   }
   return size;
 };
+
+function upload(sftp, files, fullPath, done) {
+  const directory = path.dirname(fullPath);
+  if (Object.size(files)) {
+    for (let f in files) {
+      if (files.hasOwnProperty(f)) {
+        sftp.mkdir(directory, true).then(() => {
+          sftp.put(files[f].data, fullPath, false).then(() => {
+            done();
+          })
+        }).catch(err => {
+          console.log(err);
+          done();
+        });
+      }
+    }
+  } else {
+    sftp.mkdir(directory, true).then(() => {
+      sftp.put(new Buffer(0), fullPath, false).then(() => {
+        done();
+      });
+    }).catch(err => {
+      console.log(err);
+      done();
+    });
+  }
+}
