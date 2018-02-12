@@ -1,22 +1,43 @@
 #!/usr/bin/perl
+no warnings;
+use feature 'say';
+use Term::ReadKey;
+
 my $init;
-open(my $fh, '<', "init.sh") or die "cannot open file"; {
+open(my $ifh, '<', "init.sh") or die "cannot open file"; {
     local $/;
-    $init = <$fh>;
+    $init = <$ifh>;
 }
-close($fh);
+close($ifh);
 
+my $username;
+open(my $ufh, '<', "username") or $username = ""; {
+    local $/;
+    $username = <$ufh>;
+}
+close($ufh);
 
-my @u_a = $ARGV[0];
-
-
-print "Enter your username: ";
-my $username = <STDIN>;
+$username = `bash -c "read -p 'Enter your username: ' -i '$username' -e 'USERNAME' && echo \\\$USERNAME"`;
 chomp ( $username );
 $username =~ s/[^a-zA-Z0-9]//g;
+
 if ($username eq ""){
-    print "Invalid username.\n"
+    print "Invalid username.\n";
 }else {
-    exec ("/usr/bin/ssh -t $username\@$u_a[0] '$init'");
+    open(my $ufh, '>', "username") or die "cannot open file";
+    print $ufh "$username";
+    close $ufh;
+
+    print "$username\@ada.gonzaga.edu's password: ";
+    ReadMode('noecho');
+    my $password = ReadLine(0);
+    ReadMode('normal');
+    $password =~ s/[\n\r]//g;
+
+    open(my $pfh, '>', "password") or die "cannot open file";
+    print $pfh "$password";
+    close $pfh;
+
+    print "\n";
+    exec("sshpass -p '$password' ssh -t $username\@ada.gonzaga.edu '$init'");
 }
-    

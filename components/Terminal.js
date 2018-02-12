@@ -14,7 +14,8 @@ export default class Terminal extends React.Component {
     this.state = {
       height: "0",
       cwd: "~",
-      user: ""
+      user: "",
+      fileHover: false
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
@@ -29,7 +30,10 @@ export default class Terminal extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.cwd != this.state.cwd || prevState.user != this.state.user) {
-      this.props.changeHeader(this.props.value, this.state.user + "@ada: " + this.state.cwd)
+      this.props.changeHeader(
+        this.props.value,
+        this.state.user + "@ada: " + this.state.cwd
+      );
     }
   }
 
@@ -40,17 +44,20 @@ export default class Terminal extends React.Component {
     window.addEventListener("resize", this.updateWindowDimensions);
     // create a stream for any docker image
 
-
     // use docker({style:false}) to disable default styling
     // all other options are forwarded to the term.js instance
     const terminal = docker();
 
-    const pingWS = new WebSocket(websocketProtocal + host + ":8081?session=" + this.props.session)
-    pingWS.onmessage = (event) => {
+    const pingWS = new WebSocket(
+      websocketProtocal + host + ":8081?session=" + this.props.session
+    );
+    pingWS.onmessage = event => {
       pingWS.send(event.data);
-    }
+    };
 
-    const ws = WebSocketStream(websocketProtocal + host + ":8080?session=" + this.props.session);
+    const ws = WebSocketStream(
+      websocketProtocal + host + ":8080?session=" + this.props.session
+    );
     ws.socket.addEventListener("error", e => {
       this.componentDidMount();
     });
@@ -60,7 +67,7 @@ export default class Terminal extends React.Component {
     });
 
     ws.socket.addEventListener("message", e => {
-      let decoder = new TextDecoder();
+      const decoder = new TextDecoder();
       const decoded = decoder.decode(e.data);
       const pathRegex = new RegExp("@ada: (.*)\\\\u0007\\\\u001b\\[01;32m");
       const userRegex = new RegExp("\\\\u001b]0;(.*)@ada:");
@@ -69,7 +76,7 @@ export default class Terminal extends React.Component {
 
       path ? this.setState({ cwd: path[1] }) : false;
       user ? this.setState({ user: user[1] }) : false;
-    })
+    });
     // connect to a docker-browser-console server
     terminal.pipe(ws).pipe(terminal);
 
@@ -81,10 +88,45 @@ export default class Terminal extends React.Component {
       event.initEvent("resize", true, false);
       window.dispatchEvent(event);
     }, 100);
+
+    let that = this;
+    new Dropzone(this.refs.container, {
+      url: "/upload?session=" + this.props.session,
+      uploadMultiple: false,
+      createImageThumbnails: false,
+      previewTemplate: '<div style="display:none"></div>',
+
+      init: function () {
+        this.on("addedfile", file => {
+          console.log(file);
+        });
+        this.on("dragenter", event => {
+          that.setState({ fileHover: true });
+        });
+        this.on("dragleave", event => {
+          that.setState({ fileHover: false });
+        });
+        this.on("sending", (file, xhr, formData) => {
+          console.log(formData);
+          formData.append(
+            "data",
+            JSON.stringify({
+              user: that.state.user,
+              path: that.state.cwd,
+              fullPath: that.state.cwd + "/" + (file.fullPath || file.name)
+            })
+          );
+        });
+      }
+    });
+  }
+
+  previewTemplate(e) {
+    console.log(e);
   }
 
   getUser(decoded) {
-    return decoded.split("\\u0007")[1].split("@ada")[0]
+    return decoded.split("\\u0007")[1].split("@ada")[0];
   }
 
   render() {

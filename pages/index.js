@@ -1,5 +1,5 @@
 import React from "react";
-import axios from 'axios';
+import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "material-ui/styles";
 import AppBar from "material-ui/AppBar";
@@ -10,8 +10,8 @@ import Terminal from "../components/Terminal";
 import TerminalList from "../components/TerminalList";
 import MarkdownStyle from "../components/MarkdownStyle";
 import UUID from "uuid/v4";
-import ReactGA from 'react-ga';
-
+import ReactGA from "react-ga";
+import 'babel-polyfill';
 
 let tabCount = 0;
 let deleting = false;
@@ -46,17 +46,17 @@ class Index extends React.Component {
     tabLabels[key] = value;
     this.setState({ tabLabels });
     document.getElementById("tabLabel" + key).innerHTML = value;
-    window.dispatchEvent(new Event('resize'));
+    window.dispatchEvent(new Event("resize"));
     if (key == this.state.value && value != undefined) {
       document.title = value;
     } else {
-      document.title = "adaweb.gonzaga.edu"
+      document.title = "adaweb.gonzaga.edu";
     }
-  }
+  };
 
-  keyHandler = (event) => {
-    document.getElementsByClassName("terminal")[this.state.value].focus()
-  }
+  keyHandler = event => {
+    document.getElementsByClassName("terminal")[this.state.value].focus();
+  };
 
   handleChange = (event, value) => {
     this.setState({
@@ -66,33 +66,32 @@ class Index extends React.Component {
     if (this.state.tabLabels[value] != undefined) {
       document.title = this.state.tabLabels[value];
     } else {
-      document.title = "adaweb.gonzaga.edu"
+      document.title = "adaweb.gonzaga.edu";
     }
-
   };
 
   componentDidMount() {
-    ReactGA.initialize('UA-85511623-2');
+    ReactGA.initialize("UA-85511623-2");
     ReactGA.pageview(window.location.pathname + window.location.search);
 
     this.newTerminal();
     document.addEventListener("keydown", this.keyHandler.bind(this));
-    axios.get(`https://raw.githubusercontent.com/maxchehab/wssh/master/cheatsheet.md`)
+    axios
+      .get(
+      `https://raw.githubusercontent.com/maxchehab/wssh/master/cheatsheet.md`
+      )
       .then(res => {
-        this.setState({ cheatsheet: res.data })
+        this.setState({ cheatsheet: res.data });
       });
 
-    this.setState({ height: window.innerHeight - 48 })
+    this.setState({ height: window.innerHeight - 48 });
   }
-
-
 
   newTerminal() {
     deleting = false;
     let tabs = this.state.tabs.slice();
     let terminals = this.state.terminals.slice();
     let key = tabCount;
-
 
     tabs.push(
       <Tab
@@ -114,11 +113,17 @@ class Index extends React.Component {
         style={{ height: 48, minWidth: 160 }}
         value={key}
         label={
-          <span style={{
-            fontFamily: "monospace",
-            textTransform: "none",
-            fontSize: 14,
-          }} id={"tabLabel" + key}>Terminal</span>}
+          <span
+            style={{
+              fontFamily: "monospace",
+              textTransform: "none",
+              fontSize: 14
+            }}
+            id={"tabLabel" + key}
+          >
+            Terminal
+          </span>
+        }
         icon={
           <div>
             <i
@@ -184,8 +189,6 @@ class Index extends React.Component {
   render() {
     return (
       <div>
-
-
         <style global jsx>{`
           .terminal-cursor {
             background-color: white;
@@ -205,7 +208,7 @@ class Index extends React.Component {
             display: block !important;
           }
 
-          .new-terminal:hover{
+          .new-terminal:hover {
             opacity: 1 !important;
           }
         `}</style>
@@ -214,6 +217,7 @@ class Index extends React.Component {
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Material+Icons"
           rel="stylesheet"
         />
+        <script src="/static/dropzone.js"> </script>
         <link rel="icon" href="/static/favicon.ico" />
         <title>adaweb.gonzaga.edu</title>
         <AppBar position="static" color="default">
@@ -229,10 +233,12 @@ class Index extends React.Component {
           </Tabs>
         </AppBar>
         <div style={{ display: "flex" }}>
-          <div style={{
-            width: this.state.helping ? "60%" : "100%",
-            float: "left"
-          }}>
+          <div
+            style={{
+              width: this.state.helping ? "60%" : "100%",
+              float: "left"
+            }}
+          >
             <TerminalList
               currentValue={this.state.value}
               terminals={this.state.terminals}
@@ -240,55 +246,58 @@ class Index extends React.Component {
               changeHeader={this.changeHeader}
             />
           </div>
-          <div className="markdown-body" style={{
-            width: this.state.helping ? "40%" : "0",
-            height: this.state.height,
-            display: this.state.helping ? "block" : "none",
-            float: "right",
-            overflowY: "auto",
-            paddingLeft: 16,
-            paddingRight: 16
-          }}>
+          <div
+            className="markdown-body"
+            style={{
+              width: this.state.helping ? "40%" : "0",
+              height: this.state.height,
+              display: this.state.helping ? "block" : "none",
+              float: "right",
+              overflowY: "auto",
+              paddingLeft: 16,
+              paddingRight: 16
+            }}
+          >
             <ReactMarkdown source={this.state.cheatsheet} />
           </div>
         </div>
-        {
-          this.state.tabs.length < 10 && (
-            <Button
-              className="new-terminal"
-              onClick={() => this.newTerminal()}
-              fab
-              style={{
-                position: "fixed",
-                bottom: 18,
-                right: 18,
-                opacity: 0.5
-
-              }}
-              color="primary"
-              aria-label="add"
-            >
-              <i className="material-icons">add_to_queue</i>
-            </Button>
-          )
-        }
+        {this.state.tabs.length < 10 && (
+          <Button
+            className="new-terminal"
+            onClick={() => this.newTerminal()}
+            fab
+            style={{
+              position: "fixed",
+              bottom: 18,
+              right: 18,
+              opacity: 0.5
+            }}
+            color="primary"
+            aria-label="add"
+          >
+            <i className="material-icons">add_to_queue</i>
+          </Button>
+        )}
         <Button
           className="new-terminal"
-          onClick={() => { this.setState({ helping: !this.state.helping }) }}
+          onClick={() => {
+            this.setState({ helping: !this.state.helping });
+          }}
           fab
           style={{
             position: "fixed",
             bottom: 80,
             right: 18,
             opacity: 0.5
-
           }}
           color="primary"
           aria-label="help"
         >
-          <i className="material-icons">{this.state.helping ? "close" : "help"} </i>
+          <i className="material-icons">
+            {this.state.helping ? "close" : "help"}{" "}
+          </i>
         </Button>
-      </div >
+      </div>
     );
   }
 }
