@@ -204,6 +204,10 @@ class Index extends React.Component {
             height: 100%;
           }
 
+          .terminal {
+            padding: 5px;
+          }
+
           button:hover .material-icons {
             display: block !important;
           }
