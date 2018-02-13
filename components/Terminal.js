@@ -69,6 +69,7 @@ export default class Terminal extends React.Component {
     ws.socket.addEventListener("message", e => {
       const decoder = new TextDecoder();
       const decoded = decoder.decode(e.data);
+      console.log(decoded)
       const pathRegex = new RegExp("@ada: (.*)\\\\u0007\\\\u001b\\[01;32m");
       const userRegex = new RegExp("\\\\u001b]0;(.*)@ada:");
       const path = pathRegex.exec(decoded);

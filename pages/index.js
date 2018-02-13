@@ -1,16 +1,14 @@
 import React from "react";
-import axios from "axios";
 import PropTypes from "prop-types";
 import { withStyles } from "material-ui/styles";
 import AppBar from "material-ui/AppBar";
 import Button from "material-ui/Button";
-import ReactMarkdown from "react-markdown";
 import Tabs, { Tab } from "material-ui/Tabs";
 import Terminal from "../components/Terminal";
 import TerminalList from "../components/TerminalList";
-import MarkdownStyle from "../components/MarkdownStyle";
+import Header from "../components/Header";
+import CheatSheet from "../components/CheatSheet";
 import UUID from "uuid/v4";
-import ReactGA from "react-ga";
 import 'babel-polyfill';
 
 let tabCount = 0;
@@ -71,18 +69,9 @@ class Index extends React.Component {
   };
 
   componentDidMount() {
-    ReactGA.initialize("UA-85511623-2");
-    ReactGA.pageview(window.location.pathname + window.location.search);
-
     this.newTerminal();
     document.addEventListener("keydown", this.keyHandler.bind(this));
-    axios
-      .get(
-      `https://raw.githubusercontent.com/maxchehab/wssh/master/cheatsheet.md`
-      )
-      .then(res => {
-        this.setState({ cheatsheet: res.data });
-      });
+
 
     this.setState({ height: window.innerHeight - 48 });
   }
@@ -189,41 +178,7 @@ class Index extends React.Component {
   render() {
     return (
       <div>
-        <style global jsx>{`
-          .terminal-cursor {
-            background-color: white;
-          }
-
-          body {
-            margin: 0;
-          }
-
-          .docker-browser-console {
-            font-family: monospace;
-            background-color: black;
-            height: 100%;
-          }
-
-          .terminal {
-            padding: 5px;
-          }
-
-          button:hover .material-icons {
-            display: block !important;
-          }
-
-          .new-terminal:hover {
-            opacity: 1 !important;
-          }
-        `}</style>
-        <MarkdownStyle />
-        <link
-          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Material+Icons"
-          rel="stylesheet"
-        />
-        <script src="/static/dropzone.js"> </script>
-        <link rel="icon" href="/static/favicon.ico" />
-        <title>adaweb.gonzaga.edu</title>
+        <Header />
         <AppBar position="static" color="default">
           <Tabs
             value={this.state.value}
@@ -237,51 +192,34 @@ class Index extends React.Component {
           </Tabs>
         </AppBar>
         <div style={{ display: "flex" }}>
-          <div
-            style={{
-              width: this.state.helping ? "60%" : "100%",
-              float: "left"
-            }}
-          >
-            <TerminalList
-              currentValue={this.state.value}
-              terminals={this.state.terminals}
-              session={this.state.session}
-              changeHeader={this.changeHeader}
-            />
-          </div>
-          <div
-            className="markdown-body"
-            style={{
-              width: this.state.helping ? "40%" : "0",
-              height: this.state.height,
-              display: this.state.helping ? "block" : "none",
-              float: "right",
-              overflowY: "auto",
-              paddingLeft: 16,
-              paddingRight: 16
-            }}
-          >
-            <ReactMarkdown source={this.state.cheatsheet} />
-          </div>
+          <TerminalList
+            helping={this.state.helping}
+            currentValue={this.state.value}
+            terminals={this.state.terminals}
+            session={this.state.session}
+            changeHeader={this.changeHeader}
+          />
+          <CheatSheet helping={this.state.helping} height={this.state.height} />
         </div>
-        {this.state.tabs.length < 10 && (
-          <Button
-            className="new-terminal"
-            onClick={() => this.newTerminal()}
-            fab
-            style={{
-              position: "fixed",
-              bottom: 18,
-              right: 18,
-              opacity: 0.5
-            }}
-            color="primary"
-            aria-label="add"
-          >
-            <i className="material-icons">add_to_queue</i>
-          </Button>
-        )}
+        {
+          this.state.tabs.length < 10 && (
+            <Button
+              className="new-terminal"
+              onClick={() => this.newTerminal()}
+              fab
+              style={{
+                position: "fixed",
+                bottom: 18,
+                right: 18,
+                opacity: 0.5
+              }}
+              color="primary"
+              aria-label="add"
+            >
+              <i className="material-icons">add_to_queue</i>
+            </Button>
+          )
+        }
         <Button
           className="new-terminal"
           onClick={() => {
@@ -301,13 +239,8 @@ class Index extends React.Component {
             {this.state.helping ? "close" : "help"}{" "}
           </i>
         </Button>
-      </div>
+      </div >
     );
   }
 }
-
-Index.propTypes = {
-  classes: PropTypes.object.isRequired
-};
-
 export default withStyles(styles)(Index);
