@@ -1,18 +1,11 @@
 const url = require("url");
-const path = require('path');
-const { execSync } = require('child_process');
 const ws = require("ws");
 const websocket = require("websocket-stream");
-const dockerStream = require("docker-browser-console");
+const docker = require("docker-browser-console");
 const express = require("express");
 const fileUpload = require("express-fileupload");
 const next = require("next");
 const { StringDecoder } = require("string_decoder");
-const UUID = require('uuid/v4');
-const SFTPClient = require('ssh2-sftp-client');
-const AsyncLock = require('async-lock');
-
-let lock = new AsyncLock();
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -21,7 +14,6 @@ const host = dev ? "localhost" : "adaweb.gonzaga.edu";
 const dockerfile = "wssh";
 
 let containers = {};
-let sftpClients = {};
 
 const echoPort = dev ? 8081 : 8083;
 const dockerPort = dev ? 8080 : 8082;
@@ -36,64 +28,10 @@ app
 
     server.post("/upload", (req, res) => {
       if (!req.files) return res.status(400).send("No files were uploaded.");
-
-      const session = url.parse(req.url, true).query.session;
-      const data = JSON.parse(req.body.data);
-      const user = data.user;
-      let fullPath = data.fullPath;
-      if (fullPath.charAt(0) == "~") {
-        fullPath = "/home/" + user + fullPath.substring(1);
-      }
-      if (containers[session]) {
-        for (let c of containers[session]) {
-          const credentials = extractCredentials(c.id);
-          if (!credentials.error && credentials.username == user) {
-            const key = credentials.username + credentials.password;
-            lock.acquire(key, function (done) {
-              console.log("lock has been opened");
-              if (sftpClients[key]) {
-                upload(sftpClients[key], req.files, fullPath, done);
-              } else {
-                let client = new SFTPClient();
-
-                client.connect({
-                  host: 'ada.gonzaga.edu',
-                  port: '22',
-                  username: credentials.username,
-                  password: credentials.password
-                }).then(() => {
-                  setTimeout(() => {
-                    lock.acquire(key, function (done) {
-                      sftpClients[key].end().then(() => {
-                        sftpClients[key] = undefined;
-                        console.log("successfuly ended sftp client");
-                        done();
-                      }).catch(() => {
-                        sftpClients[key] = undefined;
-                        console.log("error ending sftp client");
-                        done();
-                      });
-                    });
-                  }, 10000);
-                  sftpClients[key] = client;
-                  upload(sftpClients[key], req.files, fullPath, done);
-                }).catch(e => {
-                  sftpClients[key] = undefined;
-                  done();
-                });
-              }
-            }).then((err, ret) => {
-              if (err) { console.log(err) }
-              console.log("lock has been free'd");
-            });
-            break;
-          }
-        }
-      } else {
-        console.log("session: " + session + " not created.");
-      }
+      console.log(req.files);
       res.status(200).send("success");
     });
+
     server.listen(3000, err => {
       if (err) throw err;
       console.log("> Ready on http://" + host + ":" + 3000);
@@ -106,10 +44,16 @@ app
 let dockerServer = new ws.Server({ port: dockerPort });
 dockerServer.on("connection", (s, request) => {
   let query = url.parse(request.url, true).query;
-
+  let input = "";
+  s.on("message", message => {
+    // const decoder = new StringDecoder("utf8");
+    // const buffer = Buffer.from(message);
+    // const data = JSON.parse(decoder.write(buffer)).data;
+    // if (data && (input += data)) console.log(input);
+  });
   socket = websocket(s);
   // this will spawn the container and forward the output to the browser
-  let container = dockerStream(dockerfile, child => {
+  let container = docker(dockerfile, child => {
     container.id = child.id;
     if (!containers[query.session]) containers[query.session] = [];
     containers[query.session].push(container);
@@ -135,7 +79,7 @@ echoServer.on("connection", (socket, request) => {
   };
 
   let interval = setInterval(() => {
-    socket.send(query.session, error => { });
+    socket.send(query.session, error => {});
 
     timeout = setTimeout(destroy, 1000);
   }, 3600000);
@@ -144,53 +88,3 @@ echoServer.on("connection", (socket, request) => {
     clearTimeout(timeout);
   });
 });
-
-function extractCredentials(id) {
-  try {
-    let username = execSync("docker exec " + id + " bash -c '[ -f username ] && cat username'");
-    let password = execSync("docker exec " + id + " bash -c '[ -f password ] && cat password'");
-    return {
-      username: username.toString("utf8"),
-      password: password.toString("utf8")
-    }
-  } catch (error) {
-    return { error };
-  }
-
-  return { error: true }
-}
-
-Object.size = function (obj) {
-  var size = 0, key;
-  for (key in obj) {
-    if (obj.hasOwnProperty(key)) size++;
-  }
-  return size;
-};
-
-function upload(sftp, files, fullPath, done) {
-  const directory = path.dirname(fullPath);
-  if (Object.size(files)) {
-    for (let f in files) {
-      if (files.hasOwnProperty(f)) {
-        sftp.mkdir(directory, true).then(() => {
-          sftp.put(files[f].data, fullPath, false).then(() => {
-            done();
-          })
-        }).catch(err => {
-          console.log(err);
-          done();
-        });
-      }
-    }
-  } else {
-    sftp.mkdir(directory, true).then(() => {
-      sftp.put(new Buffer(0), fullPath, false).then(() => {
-        done();
-      });
-    }).catch(err => {
-      console.log(err);
-      done();
-    });
-  }
-}

@@ -1,0 +1,25 @@
+.terminal-cursor {
+  background-color: white;
+}
+
+body {
+  margin: 0;
+}
+
+.terminal {
+  padding: 5px;
+}
+
+.docker-browser-console {
+  font-family: monospace;
+  background-color: black;
+  height: 100%;
+}
+
+button:hover .material-icons {
+  display: block !important;
+}
+
+.new-terminal:hover {
+  opacity: 1 !important;
+}
