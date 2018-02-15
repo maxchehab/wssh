@@ -36,7 +36,8 @@ app
 
     server.post("/upload", (req, res) => {
       if (!req.files) return res.status(400).send("No files were uploaded.");
-
+      let status = 200;
+      let message = "Success.";
       const session = url.parse(req.url, true).query.session;
       const data = JSON.parse(req.body.data);
       const user = data.user;
@@ -83,17 +84,27 @@ app
                 });
               }
             }).then((err, ret) => {
-              if (err) { console.log(err) }
+              if (err) {
+                status = 500;
+                message = "Internal server error."
+                console.log(err)
+              }
               console.log("lock has been free'd");
             });
-            break;
+          } else {
+            return res.status(400).send("Invalid credentials.")
           }
         }
       } else {
+        return res.status(400).send("Invalid session.");
         console.log("session: " + session + " not created.");
       }
-      res.status(200).send("success");
+
+      return res.status(status).send(message);
     });
+
+
+
     server.listen(3000, err => {
       if (err) throw err;
       console.log("> Ready on http://" + host + ":" + 3000);

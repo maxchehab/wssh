@@ -25,6 +25,7 @@
     "react-rnd": "^7.1.5",
     "react-split-pane": "^0.1.68",
     "react-tap-event-plugin": "^3.0.2",
+    "react-toastify": "^3.3.2",
     "ssh2-sftp-client": "^2.0.1",
     "uuid": "^3.2.1",
     "websocket-stream": "^5.1.1",
@@ -39,6 +40,8 @@
     "postinstall": "quickfix"
   },
   "devDependencies": {
+    "eslint": "^4.17.0",
+    "eslint-config-google": "^0.9.1",
     "quickfix": "^1.0.3"
   }
 }

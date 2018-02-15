@@ -3,10 +3,16 @@ import docker from "docker-browser-console";
 import WebSocketStream from "websocket-stream";
 import { setTimeout } from "core-js/library/web/timers";
 import { homedir } from "os";
+import UUID from "uuid/v4";
+import { toast } from "react-toastify";
 
 const dev = process.env.NODE_ENV !== "production";
 const host = dev ? "localhost" : "adaweb.gonzaga.edu";
 const websocketProtocal = dev ? "ws://" : "wss://";
+const fileUploadQueue = [];
+const updateToast = (toastID, options) => {
+  toast.update(toastID, options);
+};
 
 export default class Terminal extends React.Component {
   constructor(props) {
@@ -19,7 +25,6 @@ export default class Terminal extends React.Component {
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
   }
-
   componentWillUnmount() {
     window.removeEventListener("resize", this.updateWindowDimensions);
   }
@@ -38,6 +43,9 @@ export default class Terminal extends React.Component {
   }
 
   componentDidMount() {
+    window.files = () => {
+      return fileUploadQueue;
+    };
     this.setState({ height: window.innerHeight - 48 });
     this.updateWindowDimensions();
 
@@ -69,7 +77,6 @@ export default class Terminal extends React.Component {
     ws.socket.addEventListener("message", e => {
       const decoder = new TextDecoder();
       const decoded = decoder.decode(e.data);
-      console.log(decoded)
       const pathRegex = new RegExp("@ada: (.*)\\\\u0007\\\\u001b\\[01;32m");
       const userRegex = new RegExp("\\\\u001b]0;(.*)@ada:");
       const path = pathRegex.exec(decoded);
@@ -92,14 +99,44 @@ export default class Terminal extends React.Component {
 
     let that = this;
     new Dropzone(this.refs.container, {
-      url: "/upload?session=" + this.props.session,
+      url: "/upload?session=" + that.props.session,
       uploadMultiple: false,
       createImageThumbnails: false,
       previewTemplate: '<div style="display:none"></div>',
 
-      init: function () {
+      init: function() {
         this.on("addedfile", file => {
-          console.log(file);
+          let time = new Date().getTime();
+
+          let index = that.fileUploadQueueContains(time);
+          let fileID = UUID();
+          file["fileID"] = fileID;
+          file["fileUploadQueueIndex"] =
+            index >= 0 ? index : fileUploadQueue.length;
+          if (index >= 0) {
+            fileUploadQueue[index].files.push(fileID);
+            fileUploadQueue[index].time = time;
+            console.log(fileUploadQueue[index].toastID);
+            setTimeout(() => {
+              toast.update(fileUploadQueue[index].toastID, {
+                render: `Uploading ${
+                  fileUploadQueue[index].files.length
+                } files to ${that.state.cwd}`
+              });
+            }, 0);
+          } else {
+            fileUploadQueue.push({
+              time: time,
+              files: [fileID],
+              completed: 0,
+              successful: [],
+              failed: [],
+              toastID: toast.info(`Uploading 1 file to ${that.state.cwd}`),
+              progress: function() {
+                return this.completed / this.files.length * 100;
+              }
+            });
+          }
         });
         this.on("dragenter", event => {
           that.setState({ fileHover: true });
@@ -108,7 +145,6 @@ export default class Terminal extends React.Component {
           that.setState({ fileHover: false });
         });
         this.on("sending", (file, xhr, formData) => {
-          console.log(formData);
           formData.append(
             "data",
             JSON.stringify({
@@ -118,16 +154,50 @@ export default class Terminal extends React.Component {
             })
           );
         });
+
+        this.on("success", (file, res) => {
+          fileUploadQueue[file.fileUploadQueueIndex].completed += 1;
+          fileUploadQueue[file.fileUploadQueueIndex].successful.push(
+            file.fileID
+          );
+          if (fileUploadQueue[file.fileUploadQueueIndex].progress() == 100) {
+            toast.dismiss(fileUploadQueue[file.fileUploadQueueIndex].toastID);
+            toast.success(
+              `Uploaded ${
+                fileUploadQueue[file.fileUploadQueueIndex].successful.length
+              } files to ${that.state.cwd}`
+            );
+          }
+        });
+
+        this.on("error", (file, message, res) => {
+          fileUploadQueue[file.fileUploadQueueIndex].completed += 1;
+          fileUploadQueue[file.fileUploadQueueIndex].failed.push(file.fileID);
+          toast.error(`Failed to upload \`${file.name}\` to ${that.state.cwd}`);
+          if (fileUploadQueue[file.fileUploadQueueIndex].progress() == 100) {
+            toast.dismiss(fileUploadQueue[file.fileUploadQueueIndex].toastID);
+            toast.success(
+              `Uploaded ${
+                fileUploadQueue[file.fileUploadQueueIndex].successful.length
+              } files to ${that.state.cwd}`
+            );
+          }
+        });
       }
     });
   }
 
-  previewTemplate(e) {
-    console.log(e);
-  }
-
   getUser(decoded) {
     return decoded.split("\\u0007")[1].split("@ada")[0];
+  }
+
+  fileUploadQueueContains(time) {
+    for (let index = 0; index < fileUploadQueue.length; index++) {
+      if (time - fileUploadQueue[index].time < 300) {
+        return index;
+      }
+    }
+    return -1;
   }
 
   render() {
