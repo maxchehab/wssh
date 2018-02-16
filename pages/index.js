@@ -153,7 +153,11 @@ class Index extends React.Component {
     return (
       <div>
         <Header />
-        <ToastContainer />
+        <ToastContainer
+          pauseOnHover={true}
+          hideProgressBar={true}
+          toastClassName={"notify"}
+        />
         <AppBar position="static" color="default">
           <Tabs
             value={this.state.value}

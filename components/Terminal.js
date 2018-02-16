@@ -5,14 +5,12 @@ import { setTimeout } from "core-js/library/web/timers";
 import { homedir } from "os";
 import UUID from "uuid/v4";
 import { toast } from "react-toastify";
+import { ToastFileError, ToastFileInfo, ToastFileSuccess } from "./Toasts";
 
 const dev = process.env.NODE_ENV !== "production";
 const host = dev ? "localhost" : "adaweb.gonzaga.edu";
 const websocketProtocal = dev ? "ws://" : "wss://";
 const fileUploadQueue = [];
-const updateToast = (toastID, options) => {
-  toast.update(toastID, options);
-};
 
 export default class Terminal extends React.Component {
   constructor(props) {
@@ -119,9 +117,12 @@ export default class Terminal extends React.Component {
             console.log(fileUploadQueue[index].toastID);
             setTimeout(() => {
               toast.update(fileUploadQueue[index].toastID, {
-                render: `Uploading ${
-                  fileUploadQueue[index].files.length
-                } files to ${that.state.cwd}`
+                render: (
+                  <ToastFileInfo
+                    count={fileUploadQueue[index].files.length}
+                    path={that.state.cwd}
+                  />
+                )
               });
             }, 0);
           } else {
@@ -131,7 +132,12 @@ export default class Terminal extends React.Component {
               completed: 0,
               successful: [],
               failed: [],
-              toastID: toast.info(`Uploading 1 file to ${that.state.cwd}`),
+              toastID: toast.info(
+                <ToastFileInfo count={1} path={that.state.cwd} />,
+                {
+                  bodyClassName: "info-notify"
+                }
+              ),
               progress: function() {
                 return this.completed / this.files.length * 100;
               }
@@ -163,9 +169,13 @@ export default class Terminal extends React.Component {
           if (fileUploadQueue[file.fileUploadQueueIndex].progress() == 100) {
             toast.dismiss(fileUploadQueue[file.fileUploadQueueIndex].toastID);
             toast.success(
-              `Uploaded ${
-                fileUploadQueue[file.fileUploadQueueIndex].successful.length
-              } files to ${that.state.cwd}`
+              <ToastFileSuccess
+                count={
+                  fileUploadQueue[file.fileUploadQueueIndex].successful.length
+                }
+                path={that.state.cwd}
+              />,
+              { bodyClassName: "success-notify" }
             );
           }
         });
@@ -173,13 +183,21 @@ export default class Terminal extends React.Component {
         this.on("error", (file, message, res) => {
           fileUploadQueue[file.fileUploadQueueIndex].completed += 1;
           fileUploadQueue[file.fileUploadQueueIndex].failed.push(file.fileID);
-          toast.error(`Failed to upload \`${file.name}\` to ${that.state.cwd}`);
+          toast.error(
+            <ToastFileError name={file.name} path={that.state.cwd} />,
+            { bodyClassName: "error-notify" }
+          );
           if (fileUploadQueue[file.fileUploadQueueIndex].progress() == 100) {
             toast.dismiss(fileUploadQueue[file.fileUploadQueueIndex].toastID);
             toast.success(
-              `Uploaded ${
-                fileUploadQueue[file.fileUploadQueueIndex].successful.length
-              } files to ${that.state.cwd}`
+              <ToastFileSuccess
+                count={
+                  fileUploadQueue[file.fileUploadQueueIndex].successful.length
+                }
+                path={that.state.cwd}
+              />,
+
+              { bodyClassName: "success-notify" }
             );
           }
         });

@@ -16,6 +16,11 @@ export default class Header extends React.Component {
           rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Material+Icons"
         />
+        <link
+          href="https://use.fontawesome.com/releases/v5.0.6/css/all.css"
+          rel="stylesheet"
+        />
+
         <link rel="icon" href="/static/favicon.ico" />
         <link rel="stylesheet" href="/static/css/index.css" />
         <link rel="stylesheet" href="/static/css/markdown.css" />
