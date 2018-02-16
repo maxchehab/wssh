@@ -1,18 +1,18 @@
+import "babel-polyfill";
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "material-ui/styles";
 import AppBar from "material-ui/AppBar";
-import Button from "material-ui/Button";
 import Tabs, { Tab } from "material-ui/Tabs";
+import UUID from "uuid/v4";
+import { ToastContainer, toast } from "react-toastify";
+
 import Terminal from "../components/Terminal";
 import TerminalList from "../components/TerminalList";
 import Header from "../components/Header";
 import CheatSheet from "../components/CheatSheet";
-import UUID from "uuid/v4";
-import 'babel-polyfill';
-
-let tabCount = 0;
-let deleting = false;
+import { Icon, Label } from "../components/TabElements";
+import FloatingButtons from "../components/FloatingButtons";
 
 const styles = theme => ({
   root: {
@@ -37,6 +37,8 @@ class Index extends React.Component {
       session: UUID()
     };
     this.changeHeader = this.changeHeader.bind(this);
+    this.changeState = this.changeState.bind(this);
+    this.addTerminal = this.addTerminal.bind(this);
   }
 
   changeHeader = (key, value) => {
@@ -56,6 +58,10 @@ class Index extends React.Component {
     document.getElementsByClassName("terminal")[this.state.value].focus();
   };
 
+  changeState = state => {
+    this.setState(state);
+  };
+
   handleChange = (event, value) => {
     this.setState({
       value: value
@@ -69,18 +75,16 @@ class Index extends React.Component {
   };
 
   componentDidMount() {
-    this.newTerminal();
+    this.addTerminal();
     document.addEventListener("keydown", this.keyHandler.bind(this));
-
 
     this.setState({ height: window.innerHeight - 48 });
   }
 
-  newTerminal() {
-    deleting = false;
+  addTerminal() {
     let tabs = this.state.tabs.slice();
     let terminals = this.state.terminals.slice();
-    let key = tabCount;
+    let key = tabs.length;
 
     tabs.push(
       <Tab
@@ -101,35 +105,8 @@ class Index extends React.Component {
         }}
         style={{ height: 48, minWidth: 160 }}
         value={key}
-        label={
-          <span
-            style={{
-              fontFamily: "monospace",
-              textTransform: "none",
-              fontSize: 14
-            }}
-            id={"tabLabel" + key}
-          >
-            Terminal
-          </span>
-        }
-        icon={
-          <div>
-            <i
-              id={"icon" + key}
-              style={{
-                display: "none",
-                right: 5,
-                position: "absolute",
-                bottom: 14,
-                fontSize: 20
-              }}
-              className="material-icons"
-            >
-              close
-            </i>
-          </div>
-        }
+        label={<Label k={key} />}
+        icon={<Icon k={key} />}
       />
     );
 
@@ -140,12 +117,9 @@ class Index extends React.Component {
       terminals: terminals,
       value: key
     });
-
-    tabCount++;
   }
 
   removeTerminal(id) {
-    deleting = true;
     let tabs = this.state.tabs.slice();
     let terminals = this.state.terminals.slice();
     let index = 0;
@@ -171,7 +145,7 @@ class Index extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (!this.state.tabs.length) {
-      this.newTerminal();
+      this.addTerminal();
     }
   }
 
@@ -179,6 +153,7 @@ class Index extends React.Component {
     return (
       <div>
         <Header />
+        <ToastContainer />
         <AppBar position="static" color="default">
           <Tabs
             value={this.state.value}
@@ -201,45 +176,13 @@ class Index extends React.Component {
           />
           <CheatSheet helping={this.state.helping} height={this.state.height} />
         </div>
-        {
-          this.state.tabs.length < 10 && (
-            <Button
-              className="new-terminal"
-              onClick={() => this.newTerminal()}
-              fab
-              style={{
-                position: "fixed",
-                bottom: 18,
-                right: 18,
-                opacity: 0.5
-              }}
-              color="primary"
-              aria-label="add"
-            >
-              <i className="material-icons">add_to_queue</i>
-            </Button>
-          )
-        }
-        <Button
-          className="new-terminal"
-          onClick={() => {
-            this.setState({ helping: !this.state.helping });
-          }}
-          fab
-          style={{
-            position: "fixed",
-            bottom: 80,
-            right: 18,
-            opacity: 0.5
-          }}
-          color="primary"
-          aria-label="help"
-        >
-          <i className="material-icons">
-            {this.state.helping ? "close" : "help"}{" "}
-          </i>
-        </Button>
-      </div >
+        <FloatingButtons
+          helping={this.state.helping}
+          tabLength={this.state.tabs.length}
+          changeState={this.changeState}
+          addTerminal={this.addTerminal}
+        />
+      </div>
     );
   }
 }

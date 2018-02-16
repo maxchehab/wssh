@@ -1,0 +1,52 @@
+.terminal-cursor {
+  background-color: white;
+}
+
+body {
+  margin: 0;
+}
+
+.docker-browser-console {
+  font-family: monospace;
+  background-color: black;
+  height: 100%;
+}
+
+.terminal {
+  padding: 5px;
+}
+
+button:hover .material-icons {
+  display: block !important;
+}
+
+.wssh-fab:hover {
+  opacity: 1 !important;
+}
+.wssh-fab {
+  position: fixed;
+  right: 18px;
+  opacity: 0.5;
+}
+
+.wssh-tab {
+  font-family: monospace;
+  text-transform: none;
+  font-size: 14px;
+}
+
+.wssh-icon {
+  display: none;
+  right: 5px;
+  position: absolute;
+  bottom: 14px;
+  font-size: 20px;
+}
+
+.wssh-new {
+  bottom: 18px;
+}
+
+.wssh-help {
+  bottom: 80px;
+}
