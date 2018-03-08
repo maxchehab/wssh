@@ -19,6 +19,7 @@ export default class Terminal extends React.Component {
       height: "0",
       cwd: "~",
       user: "",
+      address: "",
       fileHover: false
     };
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
@@ -32,10 +33,14 @@ export default class Terminal extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.cwd != this.state.cwd || prevState.user != this.state.user) {
+    if (
+      prevState.cwd != this.state.cwd ||
+      prevState.user != this.state.user ||
+      prevState.address != this.state.address
+    ) {
       this.props.changeHeader(
         this.props.value,
-        this.state.user + "@ada: " + this.state.cwd
+        this.state.user + "@" + this.state.address + ": " + this.state.cwd
       );
     }
   }
@@ -75,13 +80,14 @@ export default class Terminal extends React.Component {
     ws.socket.addEventListener("message", e => {
       const decoder = new TextDecoder();
       const decoded = decoder.decode(e.data);
-      const pathRegex = new RegExp("@ada: (.*)\\\\u0007\\\\u001b\\[01;32m");
-      const userRegex = new RegExp("\\\\u001b]0;(.*)@ada:");
+      const pathRegex = new RegExp("@(.*): (.*)\\\\u0007\\\\u001b\\[01;32m");
+      const userRegex = new RegExp("\\\\u001b]0;(.*)@(.*): ");
       const path = pathRegex.exec(decoded);
       const user = userRegex.exec(decoded);
 
-      path ? this.setState({ cwd: path[1] }) : false;
+      path ? this.setState({ cwd: path[2] }) : false;
       user ? this.setState({ user: user[1] }) : false;
+      user ? this.setState({ address: user[2] }) : false;
     });
     // connect to a docker-browser-console server
     terminal.pipe(ws).pipe(terminal);
@@ -203,10 +209,6 @@ export default class Terminal extends React.Component {
         });
       }
     });
-  }
-
-  getUser(decoded) {
-    return decoded.split("\\u0007")[1].split("@ada")[0];
   }
 
   fileUploadQueueContains(time) {
