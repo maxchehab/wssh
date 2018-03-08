@@ -9,7 +9,7 @@ export default class Header extends React.Component {
   render() {
     return (
       <div>
-        <title>adaweb.gonzaga.edu</title>
+        <title>wssh</title>
         <meta charSet="utf-8" />
 
         <link

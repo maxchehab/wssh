@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { ToastFileError, ToastFileInfo, ToastFileSuccess } from "./Toasts";
 
 const dev = process.env.NODE_ENV !== "production";
-const host = dev ? "localhost" : "adaweb.gonzaga.edu";
+const host = dev ? "localhost" : "104.236.141.69";
 const websocketProtocal = dev ? "ws://" : "wss://";
 const fileUploadQueue = [];
 

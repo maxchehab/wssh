@@ -50,7 +50,7 @@ class Index extends React.Component {
     if (key == this.state.value && value != undefined) {
       document.title = value;
     } else {
-      document.title = "adaweb.gonzaga.edu";
+      document.title = "wssh";
     }
   };
 
@@ -70,7 +70,7 @@ class Index extends React.Component {
     if (this.state.tabLabels[value] != undefined) {
       document.title = this.state.tabLabels[value];
     } else {
-      document.title = "adaweb.gonzaga.edu";
+      document.title = "wssh";
     }
   };
 
